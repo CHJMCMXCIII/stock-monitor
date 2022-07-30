@@ -17,7 +17,7 @@ const DAY_PRICE_URL = 'https://finance.naver.com/item/sise_day.nhn?code='
 const companyList = [
     {
         name: '삼성전자',
-        code: '0005930'
+        code: '005930'
     },
     {
         name: '기아',
@@ -42,13 +42,13 @@ const companyList = [
 ]
 
 // https://poiemaweb.com/es6-generator
-function* reqDaysPrice(url, name) {
+function * reqDaysPrice(url, name) {
     const resource = yield nightmare
         .goto(url)
         // 페이지 정보 읽어오기
-        .evaluate(() => document.body.innerHTML)
-
-    const $ = cheerio.load(resourse)
+        .evaluate(() =>document.body.innerHTML)
+    
+    const $ = cheerio.load(resource)
     const returningArray = []
 
     $('tr').each((index, element) => {
@@ -61,18 +61,18 @@ function* reqDaysPrice(url, name) {
         returningArray.push({
             date, endPrice, variance, isIncrease
         })
-    })
+    });
 
     return returningArray
 }
 
 const run = function* () {
     let returningObject = {}
+    // 제너레이터 활용하여 기업별 정보 가져올때 비동기 로직 처리
     for (let company of companyList) {
         const name = company.name
         const code = company.code
-
-        const reqPrice = yield* reqDaysPrice(DAY_PRICE_URL + code, name)
+        const reqPrice = yield * reqDaysPrice(DAY_PRICE_URL + code, name)
         const obj = {
             [name]: reqPrice
         }
@@ -83,7 +83,6 @@ const run = function* () {
         }
 
     }
-
     return returningObject
 }
 
@@ -106,24 +105,25 @@ const requestTodayPrice = (url, name) => {
 }
 
 app.get('/stocks/today', async (req,res) => {
+    
     const urlList = companyList.map(i => requestTodayPrice(COMPANY_MAIN_URL + i.code, i.name))
+    // requestTodayPrice를 promise로 함수를 감쌌기 때문에 await 사용 가능
     const returningUrlList = await Promise.all(urlList)
 
     let returningObject = {}
 
     returningUrlList.forEach(i => {
-        obj = {
+        returningObject = {
             ...i,
-            ...obj
+            ...returningObject
         }
     })
-
-    res.send(obj)
+    res.send(returningObject)
 })
 
 app.get('/stocks/days', (req, res) => {
     vo(run)(function (err, data) {
-        if(err) console.log(`error : ${err}`)
+        if(err)console.log(`error : ${err}`)
         res.send(data)
     })
 })
@@ -131,3 +131,6 @@ app.get('/stocks/days', (req, res) => {
 app.listen(PORT, () => {
     console.log(`서버가 http://127.0.0.1:${PORT} 에서 구동되고 있어요!`)
 })
+
+// curl http://127.0.0.1:12010/stock/days 로 백엔드 테스팅
+// cmd 한글 깨질시 UTF-8로 변경 = chcp 65001
