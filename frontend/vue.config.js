@@ -9,8 +9,7 @@ module.exports = {
         loaderOptions: {
             sass: {
                 additionalData: `
-                    @import "@/assets/scss/_reset.scss";
-                    @import "@/assets/scss/_font-face.scss";
+                    @import "@/assets/scss/style.scss";
                 `
             }
         }

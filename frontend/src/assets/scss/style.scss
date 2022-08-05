@@ -1,0 +1,16 @@
+@charset "UTF-8";
+
+@import "./reset";
+@import "./font-face";
+
+html {
+    font-family: "Pretendard", "Malgun Gothic", "맑은 고딕", "돋움", Dotum, "굴림", Gulim, Tahoma, Verdana, Geneva, sans-serif, Apple Gothic, AppleGothic;
+    font-size: 10px;
+    font-weight: 300;
+}
+
+body {
+    color: #333;
+    max-width: 640px;
+    margin: 6rem auto;
+}
