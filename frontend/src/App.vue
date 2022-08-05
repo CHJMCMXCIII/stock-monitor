@@ -1,13 +1,13 @@
 <template>
     <section>
-        <h1>주가 모니터링</h1>
+        <h1 class="app-title">주가 모니터</h1>
         <nav>
             <ul>
-                <li @click="setName('삼성전자')" :class="{ 'active': name === '삼성전자' }">삼성전자</li>
-                <li @click="setName('기아')" :class="{ 'active': name === '기아' }">기아</li>
-                <li @click="setName('포스코케미칼')" :class="{ 'active': name === '포스코케미칼' }">포스코케미칼</li>
-                <li @click="setName('CJ CGV')" :class="{ 'active': name === 'CJ CGV' }">CJ CGV</li>
-                <li @click="setName('SK이노베이션')" :class="{ 'active': name === 'SK이노베이션' }">SK이노베이션</li>
+                <li @click="setData('삼성전자')" :class="{ 'active': name === '삼성전자' }">삼성전자</li>
+                <li @click="setData('기아')" :class="{ 'active': name === '기아' }">기아</li>
+                <li @click="setData('포스코케미칼')" :class="{ 'active': name === '포스코케미칼' }">포스코케미칼</li>
+                <li @click="setData('CJ CGV')" :class="{ 'active': name === 'CJ CGV' }">CJ CGV</li>
+                <li @click="setData('SK이노베이션')" :class="{ 'active': name === 'SK이노베이션' }">SK이노베이션</li>
             </ul>
         </nav>
         <div class="back" v-if="isLoading">
@@ -22,7 +22,8 @@
             </div>
         </div>
 
-        <p>{{ stockPriceToday }}</p>
+        <h2 class="stock-name">{{ name }}</h2>
+        <h3 class="stock-price-today">{{ displayingStockPrice }}</h3>
     </section>
 </template>
 <script>
@@ -40,12 +41,13 @@ export default {
     setup() {
         let name = ref("삼성전자")
         let isLoading = ref(true)
-        let herestk = ref({})
+        let displayingStockPrice = ref({})
         let stockPriceToday = {}
         let stockPriceList = {}
 
-        let setName = (data) => {
+        let setData = (data) => {
             name.value = data
+            displayingStockPrice.value = stockPriceToday[data]
         }
 
 
@@ -56,28 +58,27 @@ export default {
             ])
                 .then(res => {
                     isLoading.value = false
-                    console.log(res[0].data)
                     stockPriceToday = res[0].data
                     stockPriceList = res[1].data
-                    setName("삼성전자")
+                    setData("삼성전자")
                 })
         })
 
         setInterval(() => {
             axios.get('http://127.0.0.1:12010/stocks/today')
-            .then(res => {
-                stockPriceToday = res.data
-                herestk.value = stockPriceToday[name.value]
-            })
+                .then(res => {
+                    stockPriceToday = res.data
+                    displayingStockPrice.value = stockPriceToday[name.value]
+                })
         }, 1000 * 60)
 
         return {
             isLoading,
             stockPriceToday,
             stockPriceList,
-            herestk,
+            displayingStockPrice,
             name,
-            setName
+            setData
         }
 
 
@@ -87,12 +88,17 @@ export default {
 </script>
 <style lang="scss">
 nav {
+    display: flex;
+    justify-content: center;
     width: 100%;
     font-size: 1.6rem;
+    margin-bottom: 7.2rem;
 
     ul {
         display: flex;
-        gap: 1.6rem;
+        max-width: 320px;
+        overflow-x: scroll;
+        gap: 2.4rem;
         justify-content: space-between;
         width: 100%;
     }
@@ -100,12 +106,26 @@ nav {
     li {
         cursor: pointer;
         text-align: center;
+        word-break: keep-all;
+        white-space: nowrap;
+        margin-bottom: 1.6rem;
+        padding-top: .8rem;
+
+        &:first-of-type {
+            margin-left: 1.6rem;
+        }
+
+        &:last-of-type {
+            margin-right: 3.2rem;
+        }
+
+        &.active {
+            border-top: 2px solid red;
+            font-weight: bold;
+        }
+
     }
 
-    .active {
-        border-bottom: 2px solid red;
-        font-weight: bold;
-    }
+
 }
-
 </style>
