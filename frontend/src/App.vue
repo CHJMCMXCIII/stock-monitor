@@ -1,29 +1,43 @@
 <template>
     <section>
         <h1 class="app-title">주가 모니터</h1>
-        <nav>
-            <ul>
-                <li @click="setData('삼성전자')" :class="{ 'active': name === '삼성전자' }">삼성전자</li>
-                <li @click="setData('기아')" :class="{ 'active': name === '기아' }">기아</li>
-                <li @click="setData('포스코케미칼')" :class="{ 'active': name === '포스코케미칼' }">포스코케미칼</li>
-                <li @click="setData('CJ CGV')" :class="{ 'active': name === 'CJ CGV' }">CJ CGV</li>
-                <li @click="setData('SK이노베이션')" :class="{ 'active': name === 'SK이노베이션' }">SK이노베이션</li>
-            </ul>
-        </nav>
-        <div class="back" v-if="isLoading">
-            <div class="background"></div>
-            <div class="vs-loading">
-                <div class="effect-1 effects"></div>
-                <div class="effect-2 effects"></div>
-                <div class="effect-3 effects"></div>
-                <div class="message">
-                    <p>정보를 불러오고 있어요!</p>
+        <div class="wrapper">
+            <nav>
+                <ul>
+                    <li @click="setData('삼성전자')" :class="{ 'active': name === '삼성전자' }">삼성전자</li>
+                    <li @click="setData('기아')" :class="{ 'active': name === '기아' }">기아</li>
+                    <li @click="setData('포스코케미칼')" :class="{ 'active': name === '포스코케미칼' }">포스코케미칼</li>
+                    <li @click="setData('CJ CGV')" :class="{ 'active': name === 'CJ CGV' }">CJ CGV</li>
+                    <li @click="setData('SK이노베이션')" :class="{ 'active': name === 'SK이노베이션' }">SK이노베이션</li>
+                </ul>
+            </nav>
+            <div class="back" v-if="isLoading">
+                <div class="background"></div>
+                <div class="vs-loading">
+                    <div class="effect-1 effects"></div>
+                    <div class="effect-2 effects"></div>
+                    <div class="effect-3 effects"></div>
+                    <div class="message">
+                        <p>정보를 불러오고 있어요!</p>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <h2 class="stock-name">{{ name }}</h2>
-        <h3 class="stock-price-today">{{ displayingStockPrice }}</h3>
+            <h2 class="stock-name">{{ name }}</h2>
+            <h3 class="stock-price-today">{{ displayingStockPrice }}</h3>
+            <div class="target-price">
+                <label for="target" v-if="parseInt(targetPrice) === 0">목표 매수금액을 설정하세요!</label>
+                <label for="target" v-else-if="parseInt(targetPrice) !== 0">아래 버튼을 눌러 저장해주세요!</label>
+                <label for="target" v-else>저장되었습니다.</label>
+                <input id="target" v-model.number="targetPrice" type="number" step="500">
+                <button @click="setTargetPrice()">
+                    저장
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                        <path
+                            d="M15.563 22.282l-3.563.718.72-3.562 2.843 2.844zm-2.137-3.552l2.845 2.845 7.729-7.73-2.845-2.845-7.729 7.73zm-3.062 2.27h-7.364v-7h12.327l6.673-6.688v-2.312l-4-4h-18v22h9.953l.411-2zm-5.364-18h12v7h-12v-7zm8.004 6h2.996v-5h-2.996v5z" />
+                    </svg></button>
+            </div>
+        </div>
     </section>
 </template>
 <script>
@@ -41,14 +55,31 @@ export default {
     setup() {
         let name = ref("삼성전자")
         let isLoading = ref(true)
+        let targetPrice = ref(0)
         let displayingStockPrice = ref({})
+        let displayingStockPriceList = ref({})
         let stockPriceToday = {}
         let stockPriceList = {}
+
+        const setTargetPrice = () => {
+            setLocalStorage(name.value, targetPrice.value)
+        }
+
+        const getLocalStorage = name => {
+            return localStorage.getItem(name) || 0
+        }
+
+        const setLocalStorage = (name, value) => {
+            localStorage.setItem(name, value)
+        }
 
         let setData = (data) => {
             name.value = data
             displayingStockPrice.value = stockPriceToday[data]
+            displayingStockPriceList.value = stockPriceList[data]
+            targetPrice.value = getLocalStorage(data)
         }
+
 
 
         onMounted(() => {
@@ -74,10 +105,12 @@ export default {
 
         return {
             isLoading,
+            targetPrice,
             stockPriceToday,
             stockPriceList,
             displayingStockPrice,
             name,
+            setTargetPrice,
             setData
         }
 
@@ -108,8 +141,9 @@ nav {
         text-align: center;
         word-break: keep-all;
         white-space: nowrap;
+        padding-top: 1.6rem;
         margin-bottom: 1.6rem;
-        padding-top: .8rem;
+        color: #dedede;
 
         &:first-of-type {
             margin-left: 1.6rem;
@@ -120,12 +154,56 @@ nav {
         }
 
         &.active {
-            border-top: 2px solid red;
+            color: #fff;
             font-weight: bold;
         }
 
     }
+}
 
+.target-price {
 
+    label {
+        display: inline-block;
+        margin-left: .8rem;
+        color: #ddd;
+        font-size: 1.4rem;
+    }
+
+    input {
+        position: relative;
+        z-index: 1;
+        margin: .8rem auto 0;
+        padding: .8rem;
+        width: 100%;
+        background: #fff;
+        color: #333;
+        font-size: 2.4rem;
+    }
+
+    button {
+        width: 100%;
+        padding: 1.8rem;
+        background-color: #7f00ff;
+        text-align: center;
+        font-size: 1.8rem;
+        font-weight: 500;
+        transition: background-color .2s ease-out, color .2s ease-out;
+
+        svg {
+            margin-left: .4rem;
+            fill: #fff;
+            transition: fill .2s ease-out;
+        }
+
+        &:hover {
+            color: #1f2023;
+            background-color: #7ff000;
+
+            svg {
+                fill: #1f2023;
+            }
+        }
+    }
 }
 </style>
