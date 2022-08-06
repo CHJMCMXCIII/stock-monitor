@@ -26,6 +26,8 @@
 
             <h2 class="stock-name">{{ name }}</h2>
             <h3 class="stock-price-today">{{ commaAddedTodayPrice }}<span>원</span></h3>
+
+            <p v-show="comment.length" class="comment">{{ comment }}</p>
             <div class="chart">
                 <svg></svg>
             </div>
@@ -60,7 +62,7 @@ export default {
     // template 에서 해당 변수와 함수를 접근할수있다.
     setup() {
         let name = ref("삼성전자")
-        let message = ref("")
+        let comment = ref("")
         let isLoading = ref(true)
         let targetPrice = ref(0)
         let isSaved = ref(false)
@@ -73,11 +75,11 @@ export default {
             d3.select(".chart svg").selectAll("g").remove()
             const remain = ((now - Math.max(now - target, 0)) / now) * 100
             if (remain === 100) {
-                message.value = `살 때가 왔군요!`
+                comment.value = `살 때가 왔군요!`
             } else if (remain >= 50) {
-                message.value = `${Math.round(remain)}% 네요 조금만 참으세요.`
+                comment.value = `${Math.round(remain)}% 네요 조금만 참으세요.`
             } else {
-                message.value = `${Math.round(remain)}% 입니다. 장기적으로 바라봐요.`
+                comment.value = `${Math.round(remain)}% 입니다. 장기적으로 바라봐요.`
             }
 
             const width = 260
@@ -192,6 +194,7 @@ export default {
             stockPriceList,
             displayingStockPrice,
             name,
+            comment,
             setTargetPrice,
             setData
         }
@@ -246,6 +249,13 @@ nav {
         }
 
     }
+}
+
+.comment {
+    text-align: center;
+    color: #7ff000;
+    font-size: 1.8rem;
+    margin-bottom: 1.6rem;
 }
 
 .target-price {
