@@ -14,16 +14,15 @@ html {
 body {
     color: #333;
     width: 100%;
-    max-width: 320px;
     margin: 6rem auto;
 }
 
 .wrapper {
     box-sizing: border-box;
     padding: 0 1.6rem 1.6rem;
+    margin: 0 1.6rem;
     border: 2px solid #7ff000;
-    border-radius: 0 0 1.6rem 1.6rem;
-    border-top: none;
+    border-radius: 0 1.6rem 1.6rem 1.6rem;
     background-color: #1f2023;
 }
 
@@ -31,8 +30,8 @@ body {
 
 h1.app-title {
     display: inline-block;
-    width: 100%;
     padding: 1rem 1.2rem .8rem;
+    margin: 0 1.6rem;
     background-color: #000;
     color: #7ff000;
     font-size: 1.6rem;
@@ -40,6 +39,7 @@ h1.app-title {
     letter-spacing: -.1rem;
     border-radius: 1.6rem 1.6rem 0 0;
     border: 2px solid #7ff000;
+    border-bottom: none;
     box-sizing: border-box;
 }
 
@@ -121,8 +121,8 @@ h3.stock-price-today {
     position: relative;
     margin: 0 auto;
     margin-top: 2rem;
-    width: 300px;
-    height: 300px;
+    width: 180px;
+    height: 180px;
     display: block;
     border-radius: 50%;
     -webkit-box-sizing: border-box;
@@ -180,8 +180,132 @@ h3.stock-price-today {
         height: 100%;
         p {
             color: #000;
-            font-size: 1.6rem;
+            font-size: 1.4rem;
             font-weight: 500;
+        }
+    }
+}
+
+.comment {
+    text-align: center;
+    color: #7ff000;
+    font-size: 1.8rem;
+    margin-bottom: 1.6rem;
+}
+
+.target-price {
+    max-width: 640px;
+    margin: 0 auto;
+    label {
+        display: block;
+        margin-left: .4rem;
+        color: #ddd;
+        font-size: 1.4rem;
+    }
+
+    input {
+        position: relative;
+        z-index: 1;
+        margin: .8rem auto 0;
+        padding: .8rem;
+        width: 100%;
+        background: #fff;
+        color: #333;
+        font-size: 2.4rem;
+        font-weight: 500;
+    }
+
+    button {
+        width: 100%;
+        padding: 1.8rem;
+        background-color: #7f00ff;
+        text-align: center;
+        color: #fff;
+        font-size: 1.8rem;
+        font-weight: 500;
+        transition: background-color .2s ease-out, color .2s ease-out;
+
+        svg {
+            margin-left: .4rem;
+            fill: #fff;
+            transition: fill .2s ease-out;
+        }
+
+        &:hover {
+            color: #1f2023;
+            background-color: #7ff000;
+
+            svg {
+                fill: #1f2023;
+            }
+        }
+    }
+}
+
+.chart {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    max-width: 220px;
+    padding: 1.6rem 0;
+    margin: 0 auto 2.4rem auto;
+    background-color: #e3e3ff;
+    border-radius: 100%;
+
+    .backColor {
+        fill: #aaa;
+    }
+    .frontColor0 {
+        fill: #7f00ff;
+    }
+}
+
+.price-table {
+    color: #fff;
+    font-size: 1.6rem;
+    margin: 3.6rem auto;
+    padding: 1.6rem 0;
+    width: 100%;
+    max-width: 640px;
+
+    table {
+        width: 100%;
+        thead {
+            th {
+                text-align: center;
+                padding: .8rem 0;
+            }
+        }
+        tbody {
+            text-align: center;
+
+            tr {
+                
+                td {
+                    padding: .4rem 0;
+                    vertical-align: middle;
+                    
+                    &:first-child {
+                        width: 20%;
+                        font-size: 1.2rem;
+                    }
+                    &:nth-child(2) {
+                        width: 40%;
+                    }
+                    &:last-child {
+                        width: 40%;
+                    }
+
+                    &.increase {
+                        color: rgb(255, 81, 0);
+                    }
+                    &.decrease {
+                        color: rgb(0, 132, 255);
+                    }
+                }
+            }
+
+
         }
     }
 }

@@ -44,6 +44,28 @@
                     </svg>
                 </button>
             </div>
+            <div class="price-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>날짜</th>
+                            <th>종가</th>
+                            <th>증감</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="(stock, index) in displayingStockPriceList" :key="index">
+                            <td>{{ stock.date }}</td>
+                            <td>{{ stock.endPrice}}</td>
+                            <td :class="{'increase': stock.isIncrease, 'decrease': !stock.isIncrease}">
+                                <span v-if="stock.isIncrease">▲</span>
+                                <span v-else>▼</span>
+                                {{ stock.variance }}
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </section>
 </template>
@@ -77,13 +99,13 @@ export default {
             if (remain === 100) {
                 comment.value = `살 때가 왔군요!`
             } else if (remain >= 50) {
-                comment.value = `${Math.round(remain)}% 네요 조금만 참으세요.`
+                comment.value = `조금만 참으세요. ${Math.round(remain)}% 네요.`
             } else {
-                comment.value = `${Math.round(remain)}% 입니다. 장기적으로 바라봐요.`
+                comment.value = `장기적으로 바라봐요. ${Math.round(remain)}% 입니다. `
             }
 
-            const width = 260
-            const height = 260
+            const width = 180
+            const height = 180
             const radius = Math.min(width, height) / 2.3
             const group = d3.select(".chart svg")
                         .attr("width", width)
@@ -99,8 +121,8 @@ export default {
             
             const textDOM = group.append("text")
                         .attr("text-anchor", "middle")
-                        .attr("dy", ".4em")
-                        .attr("font-size", "6.4rem")
+                        .attr("dy", ".5em")
+                        .attr("font-size", "4.8rem")
                         .attr("font-weight", "bold")
                         .style("fill", "#7f00ff")
 
@@ -144,6 +166,7 @@ export default {
         const setTargetPrice = () => {
             setLocalStorage(name.value, targetPrice.value)
             isSaved.value = true
+            draw(targetPrice.value, displayingStockPrice.value)
         }
 
         const getLocalStorage = name => {
@@ -193,6 +216,7 @@ export default {
             stockPriceToday,
             stockPriceList,
             displayingStockPrice,
+            displayingStockPriceList,
             name,
             comment,
             setTargetPrice,
@@ -251,75 +275,5 @@ nav {
     }
 }
 
-.comment {
-    text-align: center;
-    color: #7ff000;
-    font-size: 1.8rem;
-    margin-bottom: 1.6rem;
-}
 
-.target-price {
-
-    label {
-        display: inline-block;
-        margin-left: .4rem;
-        color: #ddd;
-        font-size: 1.4rem;
-    }
-
-    input {
-        position: relative;
-        z-index: 1;
-        margin: .8rem auto 0;
-        padding: .8rem;
-        width: 100%;
-        background: #fff;
-        color: #333;
-        font-size: 2.4rem;
-        font-weight: 500;
-    }
-
-    button {
-        width: 100%;
-        padding: 1.8rem;
-        background-color: #7f00ff;
-        text-align: center;
-        color: #fff;
-        font-size: 1.8rem;
-        font-weight: 500;
-        transition: background-color .2s ease-out, color .2s ease-out;
-
-        svg {
-            margin-left: .4rem;
-            fill: #fff;
-            transition: fill .2s ease-out;
-        }
-
-        &:hover {
-            color: #1f2023;
-            background-color: #7ff000;
-
-            svg {
-                fill: #1f2023;
-            }
-        }
-    }
-}
-
-.chart {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 1.6rem 0;
-    margin: 0 0 2.4rem 0;
-    background-color: #e3e3ff;
-    border-radius: 100%;
-
-    .backColor {
-        fill: #aaa;
-    }
-    .frontColor0 {
-        fill: #7f00ff;
-    }
-}
 </style>
