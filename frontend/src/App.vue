@@ -32,10 +32,12 @@
                 <svg></svg>
             </div>
             <div class="target-price">
-                <label for="target" v-if="parseInt(targetPrice) === 0">목표 매수금액을 설정하세요.</label>
+                <label for="target">{{ targetPriceMessage }}</label>
+                <!-- <label for="target" v-if="parseInt(targetPrice) === 0">목표 매수금액을 설정하세요.</label>
                 <label for="target" v-else-if="parseInt(targetPrice) !== 0 && isSaved === false">아래 버튼을 눌러 목표 매수가를 저장해주세요.</label>
                 <label for="target" v-else-if="parseInt(targetPrice) !== 0 && isSaved === true">목표 매수가가 저장됐어요.</label>
-                <input id="target" v-model.number="targetPrice" type="number" step="500" @click="isSaved = false">
+                <label for="target" v-else-if="parseInt(targetPrice) < 0">0 이상의 금액을 입력해주세요!</label> -->
+                <input id="target" v-model.number="targetPrice" type="number" step="500" min="0" @click="isSaved = false">
                 <button @click="setTargetPrice()">
                     저장
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
@@ -56,7 +58,7 @@
                     <tbody>
                         <tr v-for="(stock, index) in displayingStockPriceList" :key="index">
                             <td>{{ stock.date }}</td>
-                            <td>{{ stock.endPrice}}</td>
+                            <td>&#8361; {{ stock.endPrice}}</td>
                             <td :class="{'increase': stock.isIncrease, 'decrease': !stock.isIncrease}">
                                 <span v-if="stock.isIncrease">▲</span>
                                 <span v-else>▼</span>
@@ -87,6 +89,7 @@ export default {
         let comment = ref("")
         let isLoading = ref(true)
         let targetPrice = ref(0)
+        let targetPriceMessage = ref("아래 버튼을 눌러 목표 매수가를 저장해주세요.")
         let isSaved = ref(false)
         let displayingStockPrice = ref({})
         let displayingStockPriceList = ref({})
@@ -99,9 +102,11 @@ export default {
             if (remain === 100) {
                 comment.value = `살 때가 왔군요!`
             } else if (remain >= 50) {
-                comment.value = `조금만 참으세요. ${Math.round(remain)}% 네요.`
+                comment.value = `조금만 참으세요.`
+                // comment.value = `조금만 참으세요. ${Math.round(remain)}% 네요.`
             } else {
-                comment.value = `장기적으로 바라봐요. ${Math.round(remain)}% 입니다. `
+                comment.value = `장기적으로 바라봐요.`
+                //comment.value = `장기적으로 바라봐요. ${Math.round(remain)}% 입니다. `
             }
 
             const width = 180
@@ -185,8 +190,6 @@ export default {
             draw(targetPrice.value, displayingStockPrice.value)
         }
 
-
-
         onMounted(() => {
             Promise.all([
                 axios.get("http://127.0.0.1:12010/stocks/today"),
@@ -213,6 +216,7 @@ export default {
             isLoading,
             isSaved,
             targetPrice,
+            targetPriceMessage,
             stockPriceToday,
             stockPriceList,
             displayingStockPrice,
@@ -222,9 +226,21 @@ export default {
             setTargetPrice,
             setData
         }
+    },
+    watch: {
+        targetPrice: function(targetPrice) {
+            if(parseInt(targetPrice) === 0) {
+                this.targetPriceMessage = "목표 매수금액을 설정하세요."
+            } else if (parseInt(targetPrice) < 0) {
+                this.targetPriceMessage = "0 이상의 금액을 입력해주세요!"
+            } else if (parseInt(targetPrice) !== 0 && this.isSaved === false) {
+                this.targetPriceMessage = "아래 버튼을 눌러 목표 매수가를 저장해주세요."
+            } else if (parseInt(targetPrice) !== 0 && this.isSaved === true) {
+                this.targetPriceMessage = "목표 매수가가 저장됐어요."
+            }
 
-
-
+            console.log(this.isSaved)
+        }
     },
     computed: {
         commaAddedTodayPrice() {
@@ -233,47 +249,7 @@ export default {
     }
 }
 </script>
+
 <style lang="scss">
-nav {
-    display: flex;
-    justify-content: center;
-    width: 100%;
-    font-size: 1.6rem;
-    margin-bottom: 7.2rem;
-
-    ul {
-        display: flex;
-        max-width: 320px;
-        overflow-x: scroll;
-        gap: 2.4rem;
-        justify-content: space-between;
-        width: 100%;
-    }
-
-    li {
-        cursor: pointer;
-        text-align: center;
-        word-break: keep-all;
-        white-space: nowrap;
-        padding-top: 1.6rem;
-        margin-bottom: 1.6rem;
-        color: #dedede;
-
-        &:first-of-type {
-            margin-left: 1.6rem;
-        }
-
-        &:last-of-type {
-            margin-right: 3.2rem;
-        }
-
-        &.active {
-            color: #fff;
-            font-weight: bold;
-        }
-
-    }
-}
-
-
+@import "@/assets/scss/style.scss";
 </style>
