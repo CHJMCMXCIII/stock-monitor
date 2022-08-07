@@ -32,11 +32,8 @@
                 <svg></svg>
             </div>
             <div class="target-price">
-                <label for="target">{{ targetPriceMessage }}</label>
-                <!-- <label for="target" v-if="parseInt(targetPrice) === 0">목표 매수금액을 설정하세요.</label>
-                <label for="target" v-else-if="parseInt(targetPrice) !== 0 && isSaved === false">아래 버튼을 눌러 목표 매수가를 저장해주세요.</label>
-                <label for="target" v-else-if="parseInt(targetPrice) !== 0 && isSaved === true">목표 매수가가 저장됐어요.</label>
-                <label for="target" v-else-if="parseInt(targetPrice) < 0">0 이상의 금액을 입력해주세요!</label> -->
+                <label v-if="isSaved === false" for="target">{{ targetPriceMessage }}</label>
+                <label v-else-if="isSaved === true" for="target">목표 매수가가 저장됐어요.</label>
                 <input id="target" v-model.number="targetPrice" type="number" step="500" min="0" @click="isSaved = false">
                 <button @click="setTargetPrice()">
                     저장
@@ -233,13 +230,9 @@ export default {
                 this.targetPriceMessage = "목표 매수금액을 설정하세요."
             } else if (parseInt(targetPrice) < 0) {
                 this.targetPriceMessage = "0 이상의 금액을 입력해주세요!"
-            } else if (parseInt(targetPrice) !== 0 && this.isSaved === false) {
+            } else if (parseInt(targetPrice) !== 0) {
                 this.targetPriceMessage = "아래 버튼을 눌러 목표 매수가를 저장해주세요."
-            } else if (parseInt(targetPrice) !== 0 && this.isSaved === true) {
-                this.targetPriceMessage = "목표 매수가가 저장됐어요."
             }
-
-            console.log(this.isSaved)
         }
     },
     computed: {
