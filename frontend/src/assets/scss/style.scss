@@ -70,11 +70,37 @@ h3.stock-price-today {
 }
 
 nav {
+    position: relative;
     display: flex;
     justify-content: center;
     width: 100%;
+    max-width: 320px;
     font-size: 1.6rem;
-    margin-bottom: 7.2rem;
+    margin: 0 auto 7.2rem;        
+    
+    &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        display: block;
+        width: 1rem;
+        height: 100%;
+        z-index: 1;
+        background-image: linear-gradient(to right, $color-black, transparent);
+    }
+
+    &::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: calc(100% - 3rem);
+        display: block;
+        width: 3rem;
+        height: 100%;
+        z-index: 1;
+        background-image: linear-gradient(to left, $color-black, transparent);
+    }
 
     ul {
         display: flex;
@@ -83,6 +109,7 @@ nav {
         gap: 2.4rem;
         justify-content: space-between;
         width: 100%;
+
     }
 
     li {
@@ -337,6 +364,7 @@ nav {
                     }
                     &:last-child {
                         width: 40%;
+                        font-weight: 500;
                     }
 
                     &.increase {
