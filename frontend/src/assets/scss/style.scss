@@ -2,13 +2,14 @@
 
 @import "./reset";
 @import "./font-face";
+@import "./variables";
 
 html {
     font-family: "Pretendard", "Malgun Gothic", "맑은 고딕", "돋움", Dotum, "굴림", Gulim, Tahoma, Verdana, Geneva, sans-serif, Apple Gothic, AppleGothic;
     font-size: 10px;
     font-weight: 300;
     -webkit-font-smoothing: antialiased;
-    background-color: #333436;
+    background-color: $color-dark;
 }
 
 body {
@@ -21,9 +22,9 @@ body {
     box-sizing: border-box;
     padding: 0 1.6rem 1.6rem;
     margin: 0 1.6rem;
-    border: 2px solid #7ff000;
+    border: 2px solid $color-primary;
     border-radius: 0 1.6rem 1.6rem 1.6rem;
-    background-color: #1f2023;
+    background-color: $color-black;
 }
 
 
@@ -33,12 +34,12 @@ h1.app-title {
     padding: 1rem 1.2rem .8rem;
     margin: 0 1.6rem;
     background-color: #000;
-    color: #7ff000;
+    color: $color-primary;
     font-size: 1.6rem;
     font-weight: 700;
     letter-spacing: -.1rem;
     border-radius: 1.6rem 1.6rem 0 0;
-    border: 2px solid #7ff000;
+    border: 2px solid $color-primary;
     border-bottom: none;
     box-sizing: border-box;
 }
@@ -47,7 +48,7 @@ h2.stock-name {
     display: block;
     text-align: center;
     margin: 2.4rem 0 0;
-    color: #ddd;
+    color: $color-grey-0;
     font-size: 2.8rem;
     font-weight: 700;
 }
@@ -62,7 +63,7 @@ h3.stock-price-today {
     letter-spacing: -.5rem;
 
     span {
-        color: #ddd;
+        color: $color-grey-0;
         font-size: 1.4rem;
         letter-spacing: 0;
     }
@@ -91,7 +92,7 @@ nav {
         white-space: nowrap;
         padding-top: 1.6rem;
         margin-bottom: 1.6rem;
-        color: #dedede;
+        color: $color-grey-0;
 
         &:first-of-type {
             margin-left: 1.6rem;
@@ -124,7 +125,8 @@ nav {
 .background {
     width: 100%;
     height: 100%;
-    background: rgba(255, 255, 255, 0.95);
+    background: #fff;
+    opacity: 0.95;
     backdrop-filter: blur(4px);
     position: absolute;
     top: 0;
@@ -229,7 +231,7 @@ nav {
 
 .comment {
     text-align: center;
-    color: #7ff000;
+    color: $color-primary;
     font-size: 1.8rem;
     margin-bottom: 1.6rem;
 }
@@ -240,7 +242,7 @@ nav {
     label {
         display: block;
         margin-left: .4rem;
-        color: #ddd;
+        color: $color-grey-0;
         font-size: 1.4rem;
     }
 
@@ -259,7 +261,7 @@ nav {
     button {
         width: 100%;
         padding: 1.8rem;
-        background-color: #7f00ff;
+        background-color: $color-secondary;
         text-align: center;
         color: #fff;
         font-size: 1.8rem;
@@ -273,11 +275,11 @@ nav {
         }
 
         &:hover {
-            color: #1f2023;
-            background-color: #7ff000;
+            color: $color-black;
+            background-color: $color-primary;
 
             svg {
-                fill: #1f2023;
+                fill: $color-black;
             }
         }
     }
@@ -297,7 +299,7 @@ nav {
         fill: #aaa;
     }
     .frontColor0 {
-        fill: #7f00ff;
+        fill: $color-secondary;
     }
 }
 
@@ -338,10 +340,10 @@ nav {
                     }
 
                     &.increase {
-                        color: rgb(255, 81, 0);
+                        color: $color-red;
                     }
                     &.decrease {
-                        color: rgb(0, 132, 255);
+                        color: $color-blue;
                     }
                 }
             }

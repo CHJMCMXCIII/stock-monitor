@@ -3,7 +3,7 @@
         <h1 class="app-title">주식 목표가격 모니터</h1>
         <div class="wrapper">
             <nav>
-                <ul>
+                <ul @click="scrollNav()">
                     <li @click="setData('삼성전자')" :class="{ 'active': name === '삼성전자' }">삼성전자</li>
                     <li @click="setData('기아')" :class="{ 'active': name === '기아' }">기아</li>
                     <li @click="setData('포스코케미칼')" :class="{ 'active': name === '포스코케미칼' }">포스코케미칼</li>
@@ -34,7 +34,8 @@
             <div class="target-price">
                 <label v-if="isSaved === false" for="target">{{ targetPriceMessage }}</label>
                 <label v-else-if="isSaved === true" for="target">목표 매수가가 저장됐어요.</label>
-                <input id="target" v-model.number="targetPrice" type="number" step="500" min="0" @click="isSaved = false">
+                <input id="target" v-model.number="targetPrice" type="number" step="500" min="0"
+                    @click="isSaved = false">
                 <button @click="setTargetPrice()">
                     저장
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
@@ -55,8 +56,8 @@
                     <tbody>
                         <tr v-for="(stock, index) in displayingStockPriceList" :key="index">
                             <td>{{ stock.date }}</td>
-                            <td>&#8361; {{ stock.endPrice}}</td>
-                            <td :class="{'increase': stock.isIncrease, 'decrease': !stock.isIncrease}">
+                            <td>&#8361; {{ stock.endPrice }}</td>
+                            <td :class="{ 'increase': stock.isIncrease, 'decrease': !stock.isIncrease }">
                                 <span v-if="stock.isIncrease">▲</span>
                                 <span v-else>▼</span>
                                 {{ stock.variance }}
@@ -110,23 +111,23 @@ export default {
             const height = 180
             const radius = Math.min(width, height) / 2.3
             const group = d3.select(".chart svg")
-                        .attr("width", width)
-                        .attr("height", height)
-                        .append("g")
-                        .attr("transform", `translate(${width / 2}, ${height / 2})`)
+                .attr("width", width)
+                .attr("height", height)
+                .append("g")
+                .attr("transform", `translate(${width / 2}, ${height / 2})`)
 
             const pieGenerator = d3.pie().sort(null)
 
             const arc = d3.arc()
-                        .innerRadius(radius * 0.9)
-                        .outerRadius(radius)
-            
+                .innerRadius(radius * 0.9)
+                .outerRadius(radius)
+
             const textDOM = group.append("text")
-                        .attr("text-anchor", "middle")
-                        .attr("dy", ".5em")
-                        .attr("font-size", "4.8rem")
-                        .attr("font-weight", "bold")
-                        .style("fill", "#7f00ff")
+                .attr("text-anchor", "middle")
+                .attr("dy", ".5em")
+                .attr("font-size", "4.8rem")
+                .attr("font-weight", "bold")
+                .style("fill", "#7f00ff")
 
             group.append("text")
                 .attr("text-anchor", "middle")
@@ -150,19 +151,19 @@ export default {
 
             function arcTween(pie) {
                 return function (d) {
-                const interpolate = d3.interpolate(pie[0].startAngle, pie[0].endAngle)
-                const interpolateText = d3.interpolate(0, pie[0].value)
-                return function (t) {
-                    d.endAngle = interpolate(t)
-                    textDOM.text(format(interpolateText(t) / 100))
-                    return arc(d)
-                }
+                    const interpolate = d3.interpolate(pie[0].startAngle, pie[0].endAngle)
+                    const interpolateText = d3.interpolate(0, pie[0].value)
+                    return function (t) {
+                        d.endAngle = interpolate(t)
+                        textDOM.text(format(interpolateText(t) / 100))
+                        return arc(d)
+                    }
                 }
             }
             foreground.transition()
                 .duration(1500)
                 .attrTween("d", arcTween(pieGenerator([remain, 100 - remain])))
-                .delay(1000)
+                .delay(300)
         }
 
         const setTargetPrice = () => {
@@ -187,6 +188,12 @@ export default {
             draw(targetPrice.value, displayingStockPrice.value)
         }
 
+        const scrollNav = () => {
+            let ul = document.querySelector("nav > ul")
+            let activeLi = ul.querySelector(".active")
+            activeLi.scrollIntoView({inline:'center', block:'end', behavior: 'smooth'})
+        }
+
         onMounted(() => {
             Promise.all([
                 axios.get("http://127.0.0.1:12010/stocks/today"),
@@ -207,7 +214,7 @@ export default {
                     displayingStockPrice.value = stockPriceToday[name.value]
                     draw(targetPrice.value, displayingStockPrice.value)
                 })
-        }, 1000 * 60)
+        }, 1000 * 600)
 
         return {
             isLoading,
@@ -221,12 +228,13 @@ export default {
             name,
             comment,
             setTargetPrice,
-            setData
+            setData,
+            scrollNav
         }
     },
     watch: {
-        targetPrice: function(targetPrice) {
-            if(parseInt(targetPrice) === 0) {
+        targetPrice: function (targetPrice) {
+            if (parseInt(targetPrice) === 0) {
                 this.targetPriceMessage = "목표 매수금액을 설정하세요."
             } else if (parseInt(targetPrice) < 0) {
                 this.targetPriceMessage = "0 이상의 금액을 입력해주세요!"
