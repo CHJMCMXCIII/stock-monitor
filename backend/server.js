@@ -14,32 +14,8 @@ const vo = require('vo')
 const COMPANY_MAIN_URL = 'https://finance.naver.com/item/main.nhn?code='
 const DAY_PRICE_URL = 'https://finance.naver.com/item/sise_day.nhn?code='
 
-const companyList = [
-    {
-        name: '삼성전자',
-        code: '005930'
-    },
-    {
-        name: '기아',
-        code: '000270'
-    },
-    {
-        name: '포스코케미칼',
-        code: '003670'
-    },
-    {
-        name: '두산에너빌리티',
-        code: '034020'
-    },
-    {
-        name: 'CJ CGV',
-        code: '079160'
-    },
-    {
-        name: 'SK이노베이션',
-        code: '096770'
-    },
-]
+const data = require('../data/CompanyList.json')
+const companyList = data.stocks
 
 // https://poiemaweb.com/es6-generator
 function * reqDaysPrice(url, name) {

@@ -11,8 +11,7 @@
     "axios": "^0.27.2",
     "core-js": "^3.8.3",
     "d3": "^7.6.1",
-    "vue": "^3.2.13",
-    "vuex": "^4.0.2"
+    "vue": "^3.2.13"
   },
   "devDependencies": {
     "@babel/core": "^7.12.16",
@@ -38,11 +37,8 @@
       "parser": "@babel/eslint-parser"
     },
     "rules": {
-      "indent": [
-        "off",
-        4
-      ],
-      "space-before-function-paren": "off"
+        "indent": ["off", 4],
+        "space-before-function-paren": "off"
     }
   },
   "browserslist": [
