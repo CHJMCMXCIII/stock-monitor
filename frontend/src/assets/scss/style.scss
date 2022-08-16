@@ -381,6 +381,34 @@ nav {
     }
 }
 
+.button-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    .reload-button {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        background-color: #fff;
+        color: $color-dark;
+        padding: 1.6rem;
+        font-weight: 700;
+        border-radius: 100%;
+
+        svg {
+            display: block;
+            fill: $color-dark;
+            margin-bottom: .4rem;
+        }
+        span {
+            display: block;
+        }
+    }
+}
+
+
+
 @media screen and (max-width: 280px) {
     html {
         font-size: 8px;
