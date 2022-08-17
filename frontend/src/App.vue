@@ -62,24 +62,6 @@ export default {
         let isLoading = computed(() => store.state.isLoading)
 
 
-
-
-        // const setTargetPrice = () => {
-        //     setLocalStorage(name.value, targetPrice.value)
-        //     isSaved.value = true
-        //     draw(targetPrice.value, displayingStockPrice.value)
-        // }
-
-        // const getLocalStorage = name => {
-        //     return localStorage.getItem(name) || 0
-        // }
-
-        // const setLocalStorage = (name, value, saved) => {
-        //     localStorage.setItem(name, value, saved)
-        // }
-
-
-
         onMounted(() => {
             store.dispatch("LOAD_DATA")
         })

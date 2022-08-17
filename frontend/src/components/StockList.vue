@@ -16,6 +16,7 @@ export default {
     setup() {
         const store = useStore()
         // state는 computed 로 접근해야함.
+        // 값 변동시 set
         const companyList = computed(() => store.state.stocks)
         
         let companyName = ref(companyList.value[0].name)

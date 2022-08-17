@@ -8,7 +8,7 @@
             <label v-if="isSaved === false" for="target">{{ targetPriceMessage }}</label>
             <label v-else-if="isSaved === true" for="target">목표 매수가가 저장됐어요.</label>
             <input id="target" v-model.number="targetPrice" type="number" step="500" min="0" @click="isSaved = false">
-            <button @click="setTargetPrice()">
+            <button @click="setTargetPrice()" :disabled="targetPrice < 0">
                 저장
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
                     <path
@@ -29,9 +29,16 @@ export default {
 
         let stockName = computed(() => store.state.currentStockName)
 
-        let comment = ref('')
+        // state는 computed 로 접근해야함.
+        // 값 변동시 set
+        let targetPrice = computed({
+            get: () => store.state.targetPrice,
+            set: (val) => store.commit("SET_TARGET_PRICE", val)
+        })
+        
+        let comment = ref('asd')
         let targetPriceMessage = ref("아래 버튼을 눌러 목표 매수가를 저장해주세요.")
-        let targetPrice = ref(0)
+        
         let isSaved = ref(false)
 
         const setTargetPrice = () => {
@@ -43,6 +50,7 @@ export default {
         const setLocalStorage = (name, value) => {
             return localStorage.setItem(name, value)
         }
+
 
         watchEffect(() => {
             if (parseInt(targetPrice.value) === 0) {

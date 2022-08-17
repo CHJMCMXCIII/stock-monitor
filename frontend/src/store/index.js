@@ -16,7 +16,7 @@ export default createStore({
         stockPrice: {},
         tableData: {},
         tableValue: {},
-        targetPrice: '',
+        targetPrice: 0,
     },
     mutations: {
         SET_NAME(state, payload) {
@@ -30,7 +30,6 @@ export default createStore({
         },
         SET_TARGET_PRICE(state, payload) {
             state.targetPrice = payload
-            console.log(state.targetPrice)
         }
     },
     actions: {
@@ -41,6 +40,7 @@ export default createStore({
             ])
                 .then(res => {
                     this.state.isLoading = false
+
                     this.state.currentStockName = "삼성전자"
 
                     // 현재 주가
@@ -51,14 +51,16 @@ export default createStore({
                     this.state.tableData = res[1].data
                     commit("SET_TABLE_DATA", this.state.tableData[this.state.currentStockName])
 
+                    commit("SET_TARGET_PRICE", localStorage.getItem(this.state.currentStockName) || 0)
+
                 })
+                
         },
         CHANGE_DATA({ commit }, payload) {
             commit("SET_NAME", payload)
             commit("SET_STOCK_PRICE", this.state.stockPriceData[payload])
             commit("SET_TABLE_DATA", this.state.tableData[payload])
-            commit("SET_TARGET_PRICE", localStorage.getItem[payload] || 0)
-            console.log(localStorage.getItem)
+            commit("SET_TARGET_PRICE", localStorage.getItem(payload) || 0)
         },
     }
 })

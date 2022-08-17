@@ -309,6 +309,15 @@ nav {
                 fill: $color-black;
             }
         }
+
+        &:disabled {
+            background-color: #ccc;
+            color: $color-grey-0;
+
+            svg {
+                fill: $color-grey-0;
+            }
+        }
     }
 }
 
