@@ -16,6 +16,7 @@ export default createStore({
         stockPrice: {},
         tableData: {},
         tableValue: {},
+        targetPrice: '',
     },
     mutations: {
         SET_NAME(state, payload) {
@@ -26,6 +27,10 @@ export default createStore({
         },
         SET_TABLE_DATA(state, payload) {
             state.tableValue = payload
+        },
+        SET_TARGET_PRICE(state, payload) {
+            state.targetPrice = payload
+            console.log(state.targetPrice)
         }
     },
     actions: {
@@ -52,8 +57,9 @@ export default createStore({
             commit("SET_NAME", payload)
             commit("SET_STOCK_PRICE", this.state.stockPriceData[payload])
             commit("SET_TABLE_DATA", this.state.tableData[payload])
-            
-        }
+            commit("SET_TARGET_PRICE", localStorage.getItem[payload] || 0)
+            console.log(localStorage.getItem)
+        },
     }
 })
 

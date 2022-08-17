@@ -22,12 +22,14 @@
             <h2 class="stock-name">{{ currentStockName }}</h2>
             <h3 class="stock-price-today">{{ commaAddedStockPrice }}<span>원</span></h3>
 
-            <div class="button-wrapper">
+            <TargetPriceAndChart></TargetPriceAndChart>
+
+            <!-- <div class="button-wrapper">
                 <button class="reload-button" onClick="window.location.reload()">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M13.5 2c-5.629 0-10.212 4.436-10.475 10h-3.025l4.537 5.917 4.463-5.917h-2.975c.26-3.902 3.508-7 7.475-7 4.136 0 7.5 3.364 7.5 7.5s-3.364 7.5-7.5 7.5c-2.381 0-4.502-1.119-5.876-2.854l-1.847 2.449c1.919 2.088 4.664 3.405 7.723 3.405 5.798 0 10.5-4.702 10.5-10.5s-4.702-10.5-10.5-10.5z"/></svg>
                     <span>새로고침</span>
                 </button>
-            </div>
+            </div> -->
 
             <StockPriceTable></StockPriceTable>
         </div>
@@ -36,15 +38,17 @@
 <script>
 import StockList from './components/StockList'
 import StockPriceTable from './components/StockPriceTable'
+import TargetPriceAndChart from './components/TargetPriceAndChart.vue'
 // import * as d3 from 'd3'
-import { onMounted, ref, computed } from 'vue'
+import { onMounted, computed } from 'vue'
 import { useStore } from "vuex";
 
 export default {
     name: 'stock-monitor',
     components: {
         StockList,
-        StockPriceTable
+        StockPriceTable,
+        TargetPriceAndChart
     },
     //setup 함수는, Vue 3 에서 새로 나온 Composition API 이다.
     // 기존에 data, methods 등으로 흩어져있던것을, 하나의 장소로 모으게 해준다.
@@ -53,18 +57,10 @@ export default {
     // template 에서 해당 변수와 함수를 접근할수있다.
     setup() {
         const store = useStore()
-
-        let comment = ref("")
         let currentStockName = computed(() => store.state.currentStockName)
         let stockPrice = computed(() => store.state.stockPrice)
-
         let isLoading = computed(() => store.state.isLoading)
 
-        let targetPrice = ref(0)
-        let targetPriceMessage = ref("아래 버튼을 눌러 목표 매수가를 저장해주세요.")
-        // let isSaved = ref(false)
-        let displayingStockPrice = ref({})
-        let stockPriceToday = {}
 
 
 
@@ -82,13 +78,6 @@ export default {
         //     localStorage.setItem(name, value, saved)
         // }
 
-        // let setData = (data) => {
-        //     displayingStockPrice.value = stockPriceToday[data]
-        //     displayingStockPriceList.value = stockPriceList[data]
-        //     targetPrice.value = getLocalStorage(data)
-        //     draw(targetPrice.value, displayingStockPrice.value)
-        // }
-
 
 
         onMounted(() => {
@@ -104,34 +93,17 @@ export default {
         //         })
         // }, 1000 * 600)
 
+        const commaAddedStockPrice = computed(() => {
+            return stockPrice.value.toLocaleString('ko-KR');
+        })
+
         return {
             isLoading,
             currentStockName,
             stockPrice,
-            targetPrice,
-            targetPriceMessage,
-            stockPriceToday,
-            displayingStockPrice,
-            comment,
-            //setTargetPrice,
+            commaAddedStockPrice
         }
     },
-    watch: {
-        targetPrice: function (targetPrice) {
-            if (parseInt(targetPrice) === 0) {
-                this.targetPriceMessage = "목표 매수금액을 설정하세요."
-            } else if (parseInt(targetPrice) < 0) {
-                this.targetPriceMessage = "0 이상의 금액을 입력해주세요!"
-            } else if (parseInt(targetPrice) !== 0) {
-                this.targetPriceMessage = "아래 버튼을 눌러 목표 매수가를 저장해주세요."
-            }
-        }
-    },
-    computed: {
-        commaAddedStockPrice() {
-            return this.stockPrice.toLocaleString('ko-KR');
-        }
-    }
 }
 </script>
 

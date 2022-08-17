@@ -1,51 +1,71 @@
 <template>
     <section>
-                    <!-- <h2 class="stock-name">{{ name }}</h2>
-            <h3 class="stock-price-today">{{ commaAddedTodayPrice }}<span>원</span></h3>
-
-            <p v-show="comment.length" class="comment">{{ comment }}</p>
-            <div class="chart">
-                <svg></svg>
-            </div>
-            <div class="target-price">
-                <label v-if="isSaved === false" for="target">{{ targetPriceMessage }}</label>
-                <label v-else-if="isSaved === true" for="target">목표 매수가가 저장됐어요.</label>
-                <input id="target" v-model.number="targetPrice" type="number" step="500" min="0"
-                    @click="isSaved = false">
-                <button @click="setTargetPrice()">
-                    저장
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-                        <path
-                            d="M15.563 22.282l-3.563.718.72-3.562 2.843 2.844zm-2.137-3.552l2.845 2.845 7.729-7.73-2.845-2.845-7.729 7.73zm-3.062 2.27h-7.364v-7h12.327l6.673-6.688v-2.312l-4-4h-18v22h9.953l.411-2zm-5.364-18h12v7h-12v-7zm8.004 6h2.996v-5h-2.996v5z" />
-                    </svg>
-                </button>
-            </div>
-            <div class="price-table">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>날짜</th>
-                            <th>종가</th>
-                            <th>증감</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr v-for="(stock, index) in displayingStockPriceList" :key="index">
-                            <td>{{ stock.date }}</td>
-                            <td>&#8361; {{ stock.endPrice }}</td>
-                            <td :class="{ 'increase': stock.isIncrease, 'decrease': !stock.isIncrease }">
-                                <span v-if="stock.isIncrease">▲</span>
-                                <span v-else>▼</span>
-                                {{ stock.variance }}
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div> -->
+        <p v-show="comment.length" class="comment">{{ comment }}</p>
+        <!-- <div class="chart">
+            <svg></svg>
+        </div> -->
+        <div class="target-price">
+            <label v-if="isSaved === false" for="target">{{ targetPriceMessage }}</label>
+            <label v-else-if="isSaved === true" for="target">목표 매수가가 저장됐어요.</label>
+            <input id="target" v-model.number="targetPrice" type="number" step="500" min="0" @click="isSaved = false">
+            <button @click="setTargetPrice()">
+                저장
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                    <path
+                        d="M15.563 22.282l-3.563.718.72-3.562 2.843 2.844zm-2.137-3.552l2.845 2.845 7.729-7.73-2.845-2.845-7.729 7.73zm-3.062 2.27h-7.364v-7h12.327l6.673-6.688v-2.312l-4-4h-18v22h9.953l.411-2zm-5.364-18h12v7h-12v-7zm8.004 6h2.996v-5h-2.996v5z" />
+                </svg>
+            </button>
+        </div>
     </section>
 </template>
 
 <script>
+import { computed, watchEffect, ref } from 'vue'
+import { useStore } from 'vuex'
+export default {
+    name: 'TargetPriceAndChart',
+    setup() {
+        const store = useStore()
+
+        let stockName = computed(() => store.state.currentStockName)
+
+        let comment = ref('')
+        let targetPriceMessage = ref("아래 버튼을 눌러 목표 매수가를 저장해주세요.")
+        let targetPrice = ref(0)
+        let isSaved = ref(false)
+
+        const setTargetPrice = () => {
+            setLocalStorage(stockName.value, targetPrice.value)
+            isSaved.value = true
+            store.commit("SET_TARGET_PRICE", targetPrice.value)
+        }
+
+        const setLocalStorage = (name, value) => {
+            return localStorage.setItem(name, value)
+        }
+
+        watchEffect(() => {
+            if (parseInt(targetPrice.value) === 0) {
+                targetPriceMessage.value = "목표 매수금액을 설정하세요."
+            } else if (parseInt(targetPrice.value) < 0) {
+                targetPriceMessage.value = "0 이상의 금액을 입력해주세요!"
+            } else if (parseInt(targetPrice.value) !== 0) {
+                targetPriceMessage.value = "아래 버튼을 눌러 목표 매수가를 저장해주세요."
+            }
+        })
+
+
+
+        return {
+            targetPrice,
+            comment,
+            isSaved,
+            targetPriceMessage,
+            setTargetPrice,
+        }
+    }
+
+}
         // const draw = (target, now) => {
         //     d3.select(".chart svg").selectAll("g").remove()
         //     const remain = ((now - Math.max(now - target, 0)) / now) * 100
