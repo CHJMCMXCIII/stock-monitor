@@ -1,9 +1,9 @@
 <template>
     <section>
         <p v-show="comment.length" class="comment">{{ comment }}</p>
-        <!-- <div class="chart">
+        <div class="chart">
             <svg></svg>
-        </div> -->
+        </div>
         <div class="target-price">
             <label v-if="isSaved === false" for="target">{{ targetPriceMessage }}</label>
             <label v-else-if="isSaved === true" for="target">목표 매수가가 저장됐어요.</label>
@@ -22,34 +22,108 @@
 <script>
 import { computed, watchEffect, ref } from 'vue'
 import { useStore } from 'vuex'
+import * as d3 from 'd3'
 export default {
     name: 'TargetPriceAndChart',
     setup() {
         const store = useStore()
+        let comment = ref('')
 
-        let stockName = computed(() => store.state.currentStockName)
-
+        const stockName = computed(() => store.state.currentStockName)
+        const stockPrice = computed(() => store.state.stockPrice) 
         // state는 computed 로 접근해야함.
         // 값 변동시 set
         let targetPrice = computed({
             get: () => store.state.targetPrice,
             set: (val) => store.commit("SET_TARGET_PRICE", val)
         })
-        
-        let comment = ref('asd')
+
         let targetPriceMessage = ref("아래 버튼을 눌러 목표 매수가를 저장해주세요.")
-        
         let isSaved = ref(false)
+
+        const draw = (target, now) => {
+            d3.select(".chart svg").selectAll("g").remove()
+            const remain = ((now - Math.max(now - target, 0)) / now) * 100
+            if (remain >= 95) {
+                comment.value = `살 때가 왔군요!`
+            } else if (remain >= 50) {
+                comment.value = `조금만 참으세요.`
+                // comment.value = `조금만 참으세요. ${Math.round(remain)}% 네요.`
+            } else {
+                comment.value = `장기적으로 바라봐요.`
+                //comment.value = `장기적으로 바라봐요. ${Math.round(remain)}% 입니다. `
+            }
+
+            const width = 180
+            const height = 180
+            const radius = Math.min(width, height) / 2
+            const group = d3.select(".chart svg")
+                .attr("width", width)
+                .attr("height", height)
+                .append("g")
+                .attr("transform", `translate(${width / 2}, ${height / 2})`)
+
+            const pieGenerator = d3.pie().sort(null)
+
+            const arc = d3.arc()
+                .innerRadius(radius * 0.9)
+                .outerRadius(radius)
+
+            const textDOM = group.append("text")
+                .attr("text-anchor", "middle")
+                .attr("dy", ".5em")
+                .attr("font-size", "3.8rem")
+                .attr("font-weight", "bold")
+                .style("fill", "#7f00ff")
+
+            group.append("text")
+                .attr("text-anchor", "middle")
+                .attr("dy", "-2em")
+                .attr("font-size", "1.4rem")
+                .text("목표까지")
+                .style("fill", "#333")
+                .style("font-weight", "500")
+
+            group.append("path")
+                .data(pieGenerator([1]))
+                .attr("class", "backColor")
+                .attr("d", arc)
+
+            const foreground = group.append("path")
+                .data(pieGenerator([0, 100]))
+                .attr("class", (d, i) => `frontColor${i}`)
+                .attr("d", arc)
+
+            const format = d3.format(",.1%")
+
+            function arcTween(pie) {
+                return function (d) {
+                    console.log(pie)
+                    const interpolate = d3.interpolate(pie[1].startAngle, pie[0].endAngle)
+                    const interpolateText = d3.interpolate(0, pie[0].value)
+                    return function (t) {
+                        d.endAngle = interpolate(t)
+                        textDOM.text(format(interpolateText(t) / 100))
+                        return arc(d)
+                    }
+                }
+            }
+            foreground.transition()
+                .attrTween("d", arcTween(pieGenerator([remain, 100 - remain])))
+        }
+        
+        
+        const setLocalStorage = (name, value) => {
+            return localStorage.setItem(name, value)
+        }
 
         const setTargetPrice = () => {
             setLocalStorage(stockName.value, targetPrice.value)
             isSaved.value = true
             store.commit("SET_TARGET_PRICE", targetPrice.value)
+            draw(targetPrice.value, stockPrice.value)
         }
 
-        const setLocalStorage = (name, value) => {
-            return localStorage.setItem(name, value)
-        }
 
 
         watchEffect(() => {
@@ -60,9 +134,9 @@ export default {
             } else if (parseInt(targetPrice.value) !== 0) {
                 targetPriceMessage.value = "아래 버튼을 눌러 목표 매수가를 저장해주세요."
             }
+
+            draw(targetPrice.value, stockPrice.value)
         })
-
-
 
         return {
             targetPrice,
@@ -74,75 +148,4 @@ export default {
     }
 
 }
-        // const draw = (target, now) => {
-        //     d3.select(".chart svg").selectAll("g").remove()
-        //     const remain = ((now - Math.max(now - target, 0)) / now) * 100
-        //     if (remain >= 95) {
-        //         comment.value = `살 때가 왔군요!`
-        //     } else if (remain >= 50) {
-        //         comment.value = `조금만 참으세요.`
-        //         // comment.value = `조금만 참으세요. ${Math.round(remain)}% 네요.`
-        //     } else {
-        //         comment.value = `장기적으로 바라봐요.`
-        //         //comment.value = `장기적으로 바라봐요. ${Math.round(remain)}% 입니다. `
-        //     }
-
-        //     const width = 180
-        //     const height = 180
-        //     const radius = Math.min(width, height) / 2.3
-        //     const group = d3.select(".chart svg")
-        //         .attr("width", width)
-        //         .attr("height", height)
-        //         .append("g")
-        //         .attr("transform", `translate(${width / 2}, ${height / 2})`)
-
-        //     const pieGenerator = d3.pie().sort(null)
-
-        //     const arc = d3.arc()
-        //         .innerRadius(radius * 0.9)
-        //         .outerRadius(radius)
-
-        //     const textDOM = group.append("text")
-        //         .attr("text-anchor", "middle")
-        //         .attr("dy", ".5em")
-        //         .attr("font-size", "4.8rem")
-        //         .attr("font-weight", "bold")
-        //         .style("fill", "#7f00ff")
-
-        //     group.append("text")
-        //         .attr("text-anchor", "middle")
-        //         .attr("dy", "-2em")
-        //         .attr("font-size", "1.4rem")
-        //         .text("목표까지")
-        //         .style("fill", "#333")
-        //         .style("font-weight", "500")
-
-        //     group.append("path")
-        //         .data(pieGenerator([1]))
-        //         .attr("class", "backColor")
-        //         .attr("d", arc)
-
-        //     const foreground = group.append("path")
-        //         .data(pieGenerator([0, 100]))
-        //         .attr("class", (d, i) => `frontColor${i}`)
-        //         .attr("d", arc)
-
-        //     const format = d3.format(".0%")
-
-        //     function arcTween(pie) {
-        //         return function (d) {
-        //             const interpolate = d3.interpolate(pie[0].startAngle, pie[0].endAngle)
-        //             const interpolateText = d3.interpolate(0, pie[0].value)
-        //             return function (t) {
-        //                 d.endAngle = interpolate(t)
-        //                 textDOM.text(format(interpolateText(t) / 100))
-        //                 return arc(d)
-        //             }
-        //         }
-        //     }
-        //     foreground.transition()
-        //         .duration(1500)
-        //         .attrTween("d", arcTween(pieGenerator([remain, 100 - remain])))
-        //         .delay(300)
-        // }
 </script>

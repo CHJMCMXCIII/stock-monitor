@@ -13,7 +13,7 @@ export default createStore({
         isLoading : true,
         currentStockName: '',
         stockPriceData: {},
-        stockPrice: {},
+        stockPrice: 0,
         tableData: {},
         tableValue: {},
         targetPrice: 0,
@@ -40,20 +40,32 @@ export default createStore({
             ])
                 .then(res => {
                     this.state.isLoading = false
-
                     this.state.currentStockName = "삼성전자"
 
                     // 현재 주가
                     this.state.stockPriceData = res[0].data
                     commit("SET_STOCK_PRICE", this.state.stockPriceData[this.state.currentStockName])
 
-                    // 테이블 가격 테이블
+                    // 가격 테이블
                     this.state.tableData = res[1].data
                     commit("SET_TABLE_DATA", this.state.tableData[this.state.currentStockName])
-
                     commit("SET_TARGET_PRICE", localStorage.getItem(this.state.currentStockName) || 0)
 
                 })
+
+            // setInterval(() => {
+            //     axios.get('http://127.0.0.1:12010/stocks/today')
+            //         .then(res => {
+            //             this.state.stockPriceData = res[0].data
+            //             commit("SET_STOCK_PRICE", this.state.stockPriceData[this.state.currentStockName])
+    
+            //             // 테이블 가격 테이블
+            //             this.state.tableData = res[1].data
+            //             commit("SET_TABLE_DATA", this.state.tableData[this.state.currentStockName])
+    
+            //             commit("SET_TARGET_PRICE", localStorage.getItem(this.state.currentStockName) || 0)
+            //         })
+            // }, 1000 * 5)
                 
         },
         CHANGE_DATA({ commit }, payload) {

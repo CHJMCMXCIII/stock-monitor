@@ -19,8 +19,8 @@
 
             <StockList></StockList>
 
-            <h2 class="stock-name">{{ currentStockName }}</h2>
-            <h3 class="stock-price-today">{{ commaAddedStockPrice }}<span>원</span></h3>
+            <h2 class="stock-name">{{ currentStockName || '종목명'}}</h2>
+            <h3 class="stock-price-today">{{ commaAddedStockPrice || 0 }}<span>원</span></h3>
 
             <TargetPriceAndChart></TargetPriceAndChart>
 
