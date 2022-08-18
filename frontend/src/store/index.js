@@ -52,20 +52,6 @@ export default createStore({
                     commit("SET_TARGET_PRICE", localStorage.getItem(this.state.currentStockName) || 0)
 
                 })
-
-            // setInterval(() => {
-            //     axios.get('http://127.0.0.1:12010/stocks/today')
-            //         .then(res => {
-            //             this.state.stockPriceData = res[0].data
-            //             commit("SET_STOCK_PRICE", this.state.stockPriceData[this.state.currentStockName])
-    
-            //             // 테이블 가격 테이블
-            //             this.state.tableData = res[1].data
-            //             commit("SET_TABLE_DATA", this.state.tableData[this.state.currentStockName])
-    
-            //             commit("SET_TARGET_PRICE", localStorage.getItem(this.state.currentStockName) || 0)
-            //         })
-            // }, 1000 * 5)
                 
         },
         CHANGE_DATA({ commit }, payload) {
@@ -74,6 +60,13 @@ export default createStore({
             commit("SET_TABLE_DATA", this.state.tableData[payload])
             commit("SET_TARGET_PRICE", localStorage.getItem(payload) || 0)
         },
+        RELOAD_DATA({ commit }, payload) {
+            axios.get('http://127.0.0.1:12010/stocks/today')
+                .then(res => {
+                    //console.log(res.data[payload.value])
+                    commit("SET_STOCK_PRICE", res.data[payload.value])
+                })
+        }
     }
 })
 

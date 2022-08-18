@@ -1,10 +1,7 @@
 <template>
     <section>
-        <h1 class="app-title">주식 목표가격 모니터</h1>
+        <h1 class="app-title">주식 매수 목표가격 모니터</h1>
         <div class="wrapper">
-
-
-
             <div class="back" v-if="isLoading">
                 <div class="background"></div>
                 <div class="vs-loading">
@@ -19,17 +16,23 @@
 
             <StockList></StockList>
 
-            <h2 class="stock-name">{{ currentStockName || '종목명'}}</h2>
+            <h2 class="stock-name">
+                {{ currentStockName || '종목명' }}
+                <button class="reload-button" @click="reloadData()" :disabled="isReloading">
+                    <span>새로고침</span>
+                    <svg :class="{ rotate: isReloading }" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                        <path
+                            d="M23 12c0 1.042-.154 2.045-.425 3h-2.101c.335-.94.526-1.947.526-3 0-4.962-4.037-9-9-9-1.706 0-3.296.484-4.655 1.314l1.858 2.686h-6.994l2.152-7 1.849 2.673c1.684-1.049 3.659-1.673 5.79-1.673 6.074 0 11 4.925 11 11zm-6.354 7.692c-1.357.826-2.944 1.308-4.646 1.308-4.962 0-9-4.038-9-9 0-1.053.191-2.06.525-3h-2.1c-.271.955-.425 1.958-.425 3 0 6.075 4.925 11 11 11 2.127 0 4.099-.621 5.78-1.667l1.853 2.667 2.152-6.989h-6.994l1.855 2.681z" />
+                    </svg>
+                </button>
+            </h2>
             <h3 class="stock-price-today">{{ commaAddedStockPrice || 0 }}<span>원</span></h3>
 
-            <TargetPriceAndChart></TargetPriceAndChart>
+            <div class="button-wrapper">
 
-            <!-- <div class="button-wrapper">
-                <button class="reload-button" onClick="window.location.reload()">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M13.5 2c-5.629 0-10.212 4.436-10.475 10h-3.025l4.537 5.917 4.463-5.917h-2.975c.26-3.902 3.508-7 7.475-7 4.136 0 7.5 3.364 7.5 7.5s-3.364 7.5-7.5 7.5c-2.381 0-4.502-1.119-5.876-2.854l-1.847 2.449c1.919 2.088 4.664 3.405 7.723 3.405 5.798 0 10.5-4.702 10.5-10.5s-4.702-10.5-10.5-10.5z"/></svg>
-                    <span>새로고침</span>
-                </button>
-            </div> -->
+            </div>
+
+            <TargetPriceAndChart></TargetPriceAndChart>
 
             <StockPriceTable></StockPriceTable>
         </div>
@@ -40,7 +43,7 @@ import StockList from './components/StockList'
 import StockPriceTable from './components/StockPriceTable'
 import TargetPriceAndChart from './components/TargetPriceAndChart.vue'
 // import * as d3 from 'd3'
-import { onMounted, computed } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { useStore } from "vuex";
 
 export default {
@@ -60,20 +63,21 @@ export default {
         let currentStockName = computed(() => store.state.currentStockName)
         let stockPrice = computed(() => store.state.stockPrice)
         let isLoading = computed(() => store.state.isLoading)
+        let isReloading = ref(false)
 
 
         onMounted(() => {
             store.dispatch("LOAD_DATA")
         })
 
-        // setInterval(() => {
-        //     axios.get('http://127.0.0.1:12010/stocks/today')
-        //         .then(res => {
-        //             stockPriceToday = res.data
-        //             displayingStockPrice.value = stockPriceToday[name.value]
-        //             //draw(targetPrice.value, displayingStockPrice.value)
-        //         })
-        // }, 1000 * 600)
+        const reloadData = () => {
+            store.dispatch("RELOAD_DATA", currentStockName)
+            isReloading.value = true
+
+            setTimeout(() => {
+                isReloading.value = false
+            }, 1000)
+        }
 
         const commaAddedStockPrice = computed(() => {
             return stockPrice.value.toLocaleString('ko-KR');
@@ -81,9 +85,11 @@ export default {
 
         return {
             isLoading,
+            isReloading,
             currentStockName,
             stockPrice,
-            commaAddedStockPrice
+            commaAddedStockPrice,
+            reloadData
         }
     },
 }

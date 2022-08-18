@@ -7,7 +7,7 @@
         <div class="target-price">
             <label v-if="isSaved === false" for="target">{{ targetPriceMessage }}</label>
             <label v-else-if="isSaved === true" for="target">목표 매수가가 저장됐어요.</label>
-            <input id="target" v-model.number="targetPrice" type="number" step="500" min="0" @click="isSaved = false">
+            <input id="target" v-model.number="targetPrice" type="number" step="500" min="0" :max="stockPrice" @click="isSaved = false">
             <button @click="setTargetPrice()" :disabled="targetPrice < 0">
                 저장
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
@@ -31,6 +31,7 @@ export default {
 
         const stockName = computed(() => store.state.currentStockName)
         const stockPrice = computed(() => store.state.stockPrice) 
+
         // state는 computed 로 접근해야함.
         // 값 변동시 set
         let targetPrice = computed({
@@ -44,13 +45,15 @@ export default {
         const draw = (target, now) => {
             d3.select(".chart svg").selectAll("g").remove()
             const remain = ((now - Math.max(now - target, 0)) / now) * 100
-            if (remain >= 95) {
-                comment.value = `살 때가 왔군요!`
+            if (remain === 100) {
+                comment.value = `때가 왔군요!`
+            } else if (remain >= 90) {
+                comment.value = `결정의 시기가 왔어요.`
             } else if (remain >= 50) {
                 comment.value = `조금만 참으세요.`
                 // comment.value = `조금만 참으세요. ${Math.round(remain)}% 네요.`
             } else {
-                comment.value = `장기적으로 바라봐요.`
+                comment.value = `장기적으로 바라봐요..`
                 //comment.value = `장기적으로 바라봐요. ${Math.round(remain)}% 입니다. `
             }
 
@@ -98,9 +101,10 @@ export default {
 
             function arcTween(pie) {
                 return function (d) {
-                    console.log(pie)
+                    //console.log(pie)
                     const interpolate = d3.interpolate(pie[1].startAngle, pie[0].endAngle)
-                    const interpolateText = d3.interpolate(0, pie[0].value)
+                    const randomNum = Math.random() * 100;
+                    const interpolateText = d3.interpolate(randomNum, pie[0].value)
                     return function (t) {
                         d.endAngle = interpolate(t)
                         textDOM.text(format(interpolateText(t) / 100))
@@ -124,8 +128,6 @@ export default {
             draw(targetPrice.value, stockPrice.value)
         }
 
-
-
         watchEffect(() => {
             if (parseInt(targetPrice.value) === 0) {
                 targetPriceMessage.value = "목표 매수금액을 설정하세요."
@@ -139,6 +141,7 @@ export default {
         })
 
         return {
+            stockPrice,
             targetPrice,
             comment,
             isSaved,

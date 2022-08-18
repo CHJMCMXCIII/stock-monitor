@@ -51,12 +51,59 @@ h2.stock-name {
     color: $color-grey-0;
     font-size: 2.8rem;
     font-weight: 700;
+
+    .reload-button {
+        display: inline-block;
+        margin-bottom: .4rem;
+        background-color: transparent;
+        color: #ccc;
+        font-weight: 500;
+        font-size: 1.4rem;
+
+        svg {
+            fill: #ccc;
+            width: 1.6rem;
+            height: 1.6rem;
+
+            
+            &.rotate {
+                animation: spin .3s ease-out;
+            }
+        }
+
+        span {
+            display: block;
+            position: absolute;
+            overflow: hidden;
+            margin: -1px;
+            padding: 0;
+            width: 1px;
+            height: 1px;
+            line-height: 1px;
+            font-size: 1px;
+            border: 0;
+            clip: rect(0 0 0 0);
+        }
+
+        @keyframes spin {
+            from {
+                -webkit-transform: rotate(0deg);
+                -o-transform: rotate(0deg);
+                transform: rotate(0deg);
+            }
+            to {
+                -webkit-transform: rotate(-360deg);
+                -o-transform: rotate(-360deg);
+                transform: rotate(-360deg);
+            }
+        }
+    }
 }
 
 h3.stock-price-today {
     display: block;
     text-align: center;
-    margin: 0 0 2.4rem;
+    margin: 0 0 .8rem;
     color: #fff;
     font-size: 7.2rem;
     font-weight: 900;
@@ -76,8 +123,8 @@ nav {
     width: 100%;
     max-width: 320px;
     font-size: 1.6rem;
-    margin: 0 auto 7.2rem;        
-    
+    margin: 0 auto 7.2rem;
+
     &::before {
         content: '';
         position: absolute;
@@ -248,6 +295,7 @@ nav {
         align-items: center;
         width: 100%;
         height: 100%;
+
         p {
             color: #fff;
             font-size: 1.4rem;
@@ -266,6 +314,7 @@ nav {
 .target-price {
     max-width: 640px;
     margin: 0 auto;
+
     label {
         display: block;
         margin-left: .4rem;
@@ -340,6 +389,7 @@ nav {
     .backColor {
         fill: #aaa;
     }
+
     .frontColor0 {
         fill: $color-secondary;
     }
@@ -355,17 +405,19 @@ nav {
 
     table {
         width: 100%;
+
         thead {
             th {
                 text-align: center;
                 padding: .8rem 0;
             }
         }
+
         tbody {
             text-align: center;
 
             tr {
-                
+
                 td {
                     padding: .4rem 0;
                     vertical-align: middle;
@@ -374,9 +426,11 @@ nav {
                         width: 20%;
                         font-size: 1.2rem;
                     }
+
                     &:nth-child(2) {
                         width: 50%;
                     }
+
                     &:last-child {
                         width: 30%;
                         font-weight: 500;
@@ -385,6 +439,7 @@ nav {
                     &.increase {
                         color: $color-red;
                     }
+
                     &.decrease {
                         color: $color-blue;
                     }
@@ -400,24 +455,36 @@ nav {
     display: flex;
     justify-content: center;
     align-items: center;
+    margin-bottom: 4.8rem;
+
     .reload-button {
         display: flex;
         justify-content: center;
         align-items: center;
-        flex-direction: column;
-        background-color: #fff;
-        color: $color-dark;
-        padding: 1.6rem;
-        font-weight: 700;
-        border-radius: 100%;
+        gap: .4rem;
+        background-color: transparent;
+        color: #ccc;
+        font-weight: 500;
+        font-size: 1.4rem;
 
         svg {
-            display: block;
-            fill: $color-dark;
-            margin-bottom: .4rem;
+            fill: #ccc;
+            width: 1.6rem;
+            height: 1.6rem;
         }
+
         span {
             display: block;
+            position: absolute;
+            overflow: hidden;
+            margin: -1px;
+            padding: 0;
+            width: 1px;
+            height: 1px;
+            line-height: 1px;
+            font-size: 1px;
+            border: 0;
+            clip: rect(0 0 0 0);
         }
     }
 }
