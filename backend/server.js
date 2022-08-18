@@ -14,8 +14,13 @@ const vo = require('vo')
 const COMPANY_MAIN_URL = 'https://finance.naver.com/item/main.nhn?code='
 const DAY_PRICE_URL = 'https://finance.naver.com/item/sise_day.nhn?code='
 
-const data = require('../data/CompanyList.json')
-const companyList = data.stocks
+const fs = require('fs');
+const path = require('path');
+
+let jsonFilePath = path.join(__dirname, './data/CompanyList.json')
+let data = JSON.parse(fs.readFileSync(jsonFilePath, 'utf-8'))
+
+const companyList = data
 
 // https://poiemaweb.com/es6-generator
 function * reqDaysPrice(url, name) {
@@ -102,6 +107,10 @@ app.get('/stocks/days', (req, res) => {
         if(err)console.log(`error : ${err}`)
         res.send(data)
     })
+})
+
+app.get('/data', (req, res) => {
+    res.send(companyList)
 })
 
 app.listen(PORT, () => {

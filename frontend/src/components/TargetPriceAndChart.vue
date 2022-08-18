@@ -7,8 +7,9 @@
         <div class="target-price">
             <label v-if="isSaved === false" for="target">{{ targetPriceMessage }}</label>
             <label v-else-if="isSaved === true" for="target">목표 매수가가 저장됐어요.</label>
-            <input id="target" v-model.number="targetPrice" type="number" step="500" min="0" :max="stockPrice" @click="isSaved = false">
-            <button @click="setTargetPrice()" :disabled="targetPrice < 0">
+            <input id="target" v-model.number="targetPrice" type="number" step="500" min="0" :max="stockPrice" maxlength="8"
+                @click="isSaved = false" @input="inputLengthCheck">
+            <button @click="setTargetPrice()" :disabled="targetPrice < 0 || stockPrice < targetPrice || isNaN(targetPrice)">
                 저장
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
                     <path
@@ -30,13 +31,15 @@ export default {
         let comment = ref('')
 
         const stockName = computed(() => store.state.currentStockName)
-        const stockPrice = computed(() => store.state.stockPrice) 
+        const stockPrice = computed(() => store.state.stockPrice)
 
         // state는 computed 로 접근해야함.
         // 값 변동시 set
         let targetPrice = computed({
             get: () => store.state.targetPrice,
-            set: (val) => store.commit("SET_TARGET_PRICE", val)
+            set: (newVal) => {
+                store.commit("SET_TARGET_PRICE", newVal)
+            }
         })
 
         let targetPriceMessage = ref("아래 버튼을 눌러 목표 매수가를 저장해주세요.")
@@ -45,16 +48,15 @@ export default {
         const draw = (target, now) => {
             d3.select(".chart svg").selectAll("g").remove()
             const remain = ((now - Math.max(now - target, 0)) / now) * 100
+            //const remain = ((target/now)*100)
             if (remain === 100) {
                 comment.value = `때가 왔군요!`
             } else if (remain >= 90) {
                 comment.value = `결정의 시기가 왔어요.`
             } else if (remain >= 50) {
                 comment.value = `조금만 참으세요.`
-                // comment.value = `조금만 참으세요. ${Math.round(remain)}% 네요.`
             } else {
                 comment.value = `장기적으로 바라봐요..`
-                //comment.value = `장기적으로 바라봐요. ${Math.round(remain)}% 입니다. `
             }
 
             const width = 180
@@ -81,10 +83,18 @@ export default {
 
             group.append("text")
                 .attr("text-anchor", "middle")
-                .attr("dy", "-2em")
+                .attr("dy", "-2.4rem")
                 .attr("font-size", "1.4rem")
-                .text("목표까지")
+                .text("구매까지")
                 .style("fill", "#333")
+                .style("font-weight", "500")
+
+            group.append("text")
+                .attr("text-anchor", "middle")
+                .attr("dy", "3.6rem")
+                .attr("font-size", "1.2rem")
+                .text(`₩ ${target.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",")}`)
+                .style("fill", "#666")
                 .style("font-weight", "500")
 
             group.append("path")
@@ -115,8 +125,8 @@ export default {
             foreground.transition()
                 .attrTween("d", arcTween(pieGenerator([remain, 100 - remain])))
         }
-        
-        
+
+
         const setLocalStorage = (name, value) => {
             return localStorage.setItem(name, value)
         }
@@ -125,19 +135,35 @@ export default {
             setLocalStorage(stockName.value, targetPrice.value)
             isSaved.value = true
             store.commit("SET_TARGET_PRICE", targetPrice.value)
-            draw(targetPrice.value, stockPrice.value)
+            draw(parseInt(targetPrice.value), stockPrice.value)
+        }
+
+        const inputLengthCheck = (event) => {
+            const target = event.target
+            if(isNaN(target.value)) target.value = 0
+            if (target.value.length > target.maxLength) target.value = target.value.slice(0, target.maxLength)
         }
 
         watchEffect(() => {
-            if (parseInt(targetPrice.value) === 0) {
+            const watchPrice = parseInt(targetPrice.value)
+            if (watchPrice === 0) {
                 targetPriceMessage.value = "목표 매수금액을 설정하세요."
-            } else if (parseInt(targetPrice.value) < 0) {
+            } else if (watchPrice < 0) {
                 targetPriceMessage.value = "0 이상의 금액을 입력해주세요!"
-            } else if (parseInt(targetPrice.value) !== 0) {
+            } else if (watchPrice !== 0 && watchPrice < stockPrice.value) {
                 targetPriceMessage.value = "아래 버튼을 눌러 목표 매수가를 저장해주세요."
+            } else if (watchPrice > stockPrice.value) {
+                targetPriceMessage.value = "현재가보다 높거나 너무 큰 금액은 저장할 수 없어요ㅠㅠ"
+            } else if (!targetPrice.value.isInteger) {
+                targetPriceMessage.value = "숫자만 입력해주세요."
             }
 
-            draw(targetPrice.value, stockPrice.value)
+            const stringPrice = targetPrice.value.toString()
+            if(stringPrice.length >= 8 || isNaN(targetPrice.value)) {
+                draw(0, 1)
+            } else {
+                draw(targetPrice.value, stockPrice.value)
+            }
         })
 
         return {
@@ -147,6 +173,7 @@ export default {
             isSaved,
             targetPriceMessage,
             setTargetPrice,
+            inputLengthCheck
         }
     }
 

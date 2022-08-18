@@ -1,11 +1,13 @@
 import { createStore } from 'vuex'
 import axios from 'axios'
 const data = require('../../../data/CompanyList.json')
-const init_data = data.stocks
+const init_data = data
 
-//import { axios } from 'axios'
+localStorage.setItem("stocks", JSON.stringify(init_data))
+
 
 const local_data = JSON.parse(localStorage.getItem("stocks"))
+
 
 export default createStore({
     state: {

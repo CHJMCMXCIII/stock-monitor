@@ -110,6 +110,8 @@ h3.stock-price-today {
     letter-spacing: -.5rem;
 
     span {
+        display: inline-block;
+        margin-left: .3rem;
         color: $color-grey-0;
         font-size: 1.4rem;
         letter-spacing: 0;
@@ -200,12 +202,13 @@ nav {
     width: 100%;
     height: 100%;
     background: $color-black;
-    opacity: 0.95;
+    opacity: 0.98;
     backdrop-filter: blur(4px);
     position: absolute;
     top: 0;
     left: 0;
 }
+
 
 @keyframes rotate {
     0% {
@@ -236,9 +239,9 @@ nav {
 
 .vs-loading {
     position: relative;
-    margin: 0 auto 18rem;
-    width: 180px;
-    height: 180px;
+    margin: 0 auto 28rem;
+    width: 220px;
+    height: 220px;
     display: block;
     border-radius: 50%;
     -webkit-box-sizing: border-box;
@@ -328,9 +331,9 @@ nav {
         padding: .8rem;
         width: 100%;
         background: #fff;
-        color: #333;
+        color: $color-dark;
         font-size: 2.4rem;
-        font-weight: 500;
+        font-weight: 700;
     }
 
     button {
@@ -362,9 +365,33 @@ nav {
             cursor: not-allowed;
             background-color: #c6c6c6;
             color: #8d8d8d;
+            animation: shake .5s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
 
             svg {
                 fill: $color-grey-0;
+            }
+        }
+
+        @keyframes shake {
+            10%,
+            90% {
+              transform: translate3d(-1px, 0, 0);
+            }
+          
+            20%,
+            80% {
+              transform: translate3d(2px, 0, 0);
+            }
+          
+            30%,
+            50%,
+            70% {
+              transform: translate3d(-4px, 0, 0);
+            }
+          
+            40%,
+            60% {
+              transform: translate3d(4px, 0, 0);
             }
         }
     }
@@ -450,48 +477,16 @@ nav {
     }
 }
 
-.button-wrapper {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-bottom: 4.8rem;
-
-    .reload-button {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        gap: .4rem;
-        background-color: transparent;
-        color: #ccc;
-        font-weight: 500;
-        font-size: 1.4rem;
-
-        svg {
-            fill: #ccc;
-            width: 1.6rem;
-            height: 1.6rem;
-        }
-
-        span {
-            display: block;
-            position: absolute;
-            overflow: hidden;
-            margin: -1px;
-            padding: 0;
-            width: 1px;
-            height: 1px;
-            line-height: 1px;
-            font-size: 1px;
-            border: 0;
-            clip: rect(0 0 0 0);
-        }
-    }
-}
-
 
 
 @media screen and (max-width: 280px) {
     html {
         font-size: 8px;
+    }
+}
+
+@media screen and (min-width: 1281px) {
+    body {
+        overflow-y: hidden;
     }
 }

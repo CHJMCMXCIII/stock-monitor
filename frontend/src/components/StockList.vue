@@ -29,7 +29,7 @@ export default {
         const navFocus = () => {
             let ul = document.querySelector("nav > ul")
             let activeLi = ul.querySelector(".active")
-            activeLi.scrollIntoView({ inline: 'center', block: 'end', behavior: 'smooth' })
+            activeLi.scrollIntoView({ inline: 'center', block: 'nearest', behavior: 'smooth' })
         }
 
         return {
