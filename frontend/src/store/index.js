@@ -18,7 +18,7 @@ export default createStore({
         stockPrice: 0,
         tableData: {},
         tableValue: {},
-        targetPrice: 0,
+        targetPrice: '',
     },
     mutations: {
         SET_NAME(state, payload) {

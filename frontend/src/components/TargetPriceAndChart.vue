@@ -7,9 +7,9 @@
         <div class="target-price">
             <label v-if="isSaved === false" for="target">{{ targetPriceMessage }}</label>
             <label v-else-if="isSaved === true" for="target">목표 매수가가 저장됐어요.</label>
-            <input id="target" v-model.number="targetPrice" type="number" step="500" min="0" :max="stockPrice" maxlength="8"
-                @click="isSaved = false" @input="inputLengthCheck">
-            <button @click="setTargetPrice()" :disabled="targetPrice < 0 || stockPrice < targetPrice || isNaN(targetPrice)">
+            <input id="target" v-model.number="targetPrice" type="text" :max="stockPrice"
+                maxlength="8" @click="isSaved = false" @focus="isFocused = true" @blur="isFocused = false" @input="inputLengthCheck">
+            <button @click="setTargetPrice()" :disabled="targetPrice < 0 || stockPrice < targetPrice || targetPrice.length > 8">
                 저장
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
                     <path
@@ -32,18 +32,18 @@ export default {
 
         const stockName = computed(() => store.state.currentStockName)
         const stockPrice = computed(() => store.state.stockPrice)
+        let targetPriceMessage = ref("아래 버튼을 눌러 목표 매수가를 저장해주세요.")
+        let isSaved = ref(false)
+        let isFocused = ref(false)
 
-        // state는 computed 로 접근해야함.
-        // 값 변동시 set
         let targetPrice = computed({
-            get: () => store.state.targetPrice,
+            get: () => {
+                return store.state.targetPrice || ''
+            },
             set: (newVal) => {
                 store.commit("SET_TARGET_PRICE", newVal)
             }
         })
-
-        let targetPriceMessage = ref("아래 버튼을 눌러 목표 매수가를 저장해주세요.")
-        let isSaved = ref(false)
 
         const draw = (target, now) => {
             d3.select(".chart svg").selectAll("g").remove()
@@ -113,8 +113,8 @@ export default {
                 return function (d) {
                     //console.log(pie)
                     const interpolate = d3.interpolate(pie[1].startAngle, pie[0].endAngle)
-                    const randomNum = Math.random() * 100;
-                    const interpolateText = d3.interpolate(randomNum, pie[0].value)
+                    //const randomNum = Math.random() * 100;
+                    const interpolateText = d3.interpolate(0, pie[0].value)
                     return function (t) {
                         d.endAngle = interpolate(t)
                         textDOM.text(format(interpolateText(t) / 100))
@@ -135,7 +135,7 @@ export default {
             setLocalStorage(stockName.value, targetPrice.value)
             isSaved.value = true
             store.commit("SET_TARGET_PRICE", targetPrice.value)
-            draw(parseInt(targetPrice.value), stockPrice.value)
+            draw(Number(targetPrice.value.toString().replaceAll(',', '')), stockPrice.value)
         }
 
         const inputLengthCheck = (event) => {
@@ -145,24 +145,30 @@ export default {
         }
 
         watchEffect(() => {
+            draw(Number(targetPrice.value.toString().replaceAll(',', '')), stockPrice.value)
+        })
+
+        watchEffect(() => {
             const watchPrice = parseInt(targetPrice.value)
-            if (watchPrice === 0) {
+            if (watchPrice === 0 || targetPrice.value.length === 0) {
                 targetPriceMessage.value = "목표 매수금액을 설정하세요."
             } else if (watchPrice < 0) {
                 targetPriceMessage.value = "0 이상의 금액을 입력해주세요!"
             } else if (watchPrice !== 0 && watchPrice < stockPrice.value) {
                 targetPriceMessage.value = "아래 버튼을 눌러 목표 매수가를 저장해주세요."
             } else if (watchPrice > stockPrice.value) {
-                targetPriceMessage.value = "현재가보다 높거나 너무 큰 금액은 저장할 수 없어요ㅠㅠ"
-            } else if (!targetPrice.value.isInteger) {
+                targetPriceMessage.value = "현재가보다 높거나 너무 큰 금액은 저장할 수 없어요..."
+            } else if (!targetPrice.value.isInteger && targetPrice.value.length > 0) {
                 targetPriceMessage.value = "숫자만 입력해주세요."
             }
 
-            const stringPrice = targetPrice.value.toString()
-            if(stringPrice.length >= 8 || isNaN(targetPrice.value)) {
-                draw(0, 1)
-            } else {
-                draw(targetPrice.value, stockPrice.value)
+            if (isFocused.value === true) {
+                targetPrice.value = Number(targetPrice.value.toString().replaceAll(',', ''))
+            } else if (isFocused.value === false) {
+                if(targetPrice.value > stockPrice.value || targetPrice.value.length > 8) {
+                    targetPrice.value = 0
+                }
+                targetPrice.value = targetPrice.value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
             }
         })
 
@@ -171,6 +177,9 @@ export default {
             targetPrice,
             comment,
             isSaved,
+            isFocused,
+            //addComma,
+            //removeComma,
             targetPriceMessage,
             setTargetPrice,
             inputLengthCheck
