@@ -70,7 +70,7 @@ export default createStore({
             axios.get('http://127.0.0.1:12010/stocks/list')
                 .then(res => {
                     commit("SET_COMPANY", res.data)
-                    
+                    localStorage.setItem("stocks", JSON.stringify(res.data))
                 })
         }
     }
