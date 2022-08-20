@@ -7,11 +7,10 @@
         <div class="target-price">
             <label v-if="isSaved === false" for="target">{{ targetPriceMessage }}</label>
             <label v-else-if="isSaved === true" for="target">목표 매수가가 저장됐어요.</label>
-            <input id="target" v-model.number="targetPrice" type="text" :max="stockPrice"
-                maxlength="8" @click="isSaved = false" @focus="isFocused = true" @blur="isFocused = false" @input="inputLengthCheck" placeholder="가격을 입력해주세요.">
-            <button @click="setTargetPrice()" :disabled="targetPrice < 0 || stockPrice < targetPrice || targetPrice.length > 8">
+            <input id="target" v-model="targetPrice" type="text" maxlength="8" @keyup="getNumber" @input="getNumber" placeholder="가격을 입력해주세요.">
+            <button @click="setTargetPrice" @focus="isSaved = true" @blur="isSaved=false" :disabled="targetPrice.length === 0 || stockPrice < Number(targetPrice.replaceAll(',', '')) || targetPrice.length > 8">
                 저장
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                <svg @click.prevent.self xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
                     <path
                         d="M15.563 22.282l-3.563.718.72-3.562 2.843 2.844zm-2.137-3.552l2.845 2.845 7.729-7.73-2.845-2.845-7.729 7.73zm-3.062 2.27h-7.364v-7h12.327l6.673-6.688v-2.312l-4-4h-18v22h9.953l.411-2zm-5.364-18h12v7h-12v-7zm8.004 6h2.996v-5h-2.996v5z" />
                 </svg>
@@ -34,7 +33,6 @@ export default {
         const stockPrice = computed(() => store.state.stockPrice)
         let targetPriceMessage = ref("아래 버튼을 눌러 목표 매수가를 저장해주세요.")
         let isSaved = ref(false)
-        let isFocused = ref(false)
 
         let targetPrice = computed({
             get: () => {
@@ -135,21 +133,29 @@ export default {
             setLocalStorage(stockName.value, targetPrice.value)
             isSaved.value = true
             store.commit("SET_TARGET_PRICE", targetPrice.value)
-            draw(Number(targetPrice.value.toString().replaceAll(',', '')), stockPrice.value)
+            draw(Number(targetPrice.value.replaceAll(',', '')), stockPrice.value)
         }
 
-        const inputLengthCheck = (event) => {
-            const target = event.target
-            if(isNaN(target.value)) target.value = 0
-            if (target.value.length > target.maxLength) target.value = target.value.slice(0, target.maxLength)
+        const getNumber = (event) => {
+            const preNum = event.target.value.replace(/\D/g,"")
+            const postNum = addcommas(preNum)
+            targetPrice.value = postNum
         }
 
+        const addcommas = (num) => {
+            const regex = /(^[+-]?\d+)(\d{3})/
+            while(regex.test(num)) {
+                num = num.replace(regex, '$1' + ',' + '$2')
+            }
+            return num
+        }
+        
         watchEffect(() => {
             draw(Number(targetPrice.value.toString().replaceAll(',', '')), stockPrice.value)
         })
 
         watchEffect(() => {
-            const watchPrice = parseInt(targetPrice.value)
+            const watchPrice = Number(targetPrice.value.toString().replaceAll(',', ''))
             if (watchPrice === 0 || targetPrice.value.length === 0) {
                 targetPriceMessage.value = "목표 매수금액을 설정하세요."
             } else if (watchPrice < 0) {
@@ -161,15 +167,6 @@ export default {
             } else if (!targetPrice.value.isInteger && targetPrice.value.length > 0) {
                 targetPriceMessage.value = "숫자만 입력해주세요."
             }
-
-            if (isFocused.value === true) {
-                targetPrice.value = Number(targetPrice.value.toString().replaceAll(',', ''))
-            } else if (isFocused.value === false) {
-                if(targetPrice.value > stockPrice.value || targetPrice.value.length > 8) {
-                    targetPrice.value = 0
-                }
-                targetPrice.value = targetPrice.value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
-            }
         })
 
         return {
@@ -177,10 +174,9 @@ export default {
             targetPrice,
             comment,
             isSaved,
-            isFocused,
             targetPriceMessage,
             setTargetPrice,
-            inputLengthCheck
+            getNumber,
         }
     }
 
