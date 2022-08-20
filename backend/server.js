@@ -109,7 +109,7 @@ app.get('/stocks/days', (req, res) => {
     })
 })
 
-app.get('/data', (req, res) => {
+app.get('/stocks/list', (req, res) => {
     res.send(companyList)
 })
 

@@ -1,17 +1,17 @@
 import { createStore } from 'vuex'
 import axios from 'axios'
-const data = require('../../../data/CompanyList.json')
-const init_data = data
+// const json_data = require('../../../data/CompanyList.json')
+// const init_data = data
 
-localStorage.setItem("stocks", JSON.stringify(init_data))
 
+// localStorage.setItem("stocks", JSON.stringify(json_data))
 
 const local_data = JSON.parse(localStorage.getItem("stocks"))
 
-
 export default createStore({
     state: {
-        stocks: local_data || init_data,
+        // stocks: local_data || init_data,
+        stocks: local_data || {},
         isLoading : true,
         currentStockName: '',
         stockPriceData: {},
@@ -21,6 +21,9 @@ export default createStore({
         targetPrice: '',
     },
     mutations: {
+        SET_COMPANY(state, payload) {
+            state.stocks = payload
+        },
         SET_NAME(state, payload) {
             state.currentStockName = payload
         },
@@ -67,6 +70,12 @@ export default createStore({
                 .then(res => {
                     //console.log(res.data[payload.value])
                     commit("SET_STOCK_PRICE", res.data[payload.value])
+                })
+        },
+        REQUEST_COMPANY({ commit }) {
+            axios.get('http://127.0.0.1:12010/stocks/list')
+                .then(res => {
+                    commit("SET_COMPANY", res.data)
                 })
         }
     }

@@ -7,7 +7,7 @@
 </template>
 
 <script>
-import { ref, computed } from 'vue'
+import { onMounted, computed, ref } from 'vue'
 import { useStore } from "vuex";
 
 
@@ -19,7 +19,12 @@ export default {
         // 값 변동시 set
         const companyList = computed(() => store.state.stocks)
         
-        let companyName = ref(companyList.value[0].name)
+        
+        onMounted(() => {
+            store.dispatch("REQUEST_COMPANY")
+        })
+        
+        let companyName = ref('삼성전자')
 
         let setData = (name) => {
             companyName.value = name

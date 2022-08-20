@@ -8,7 +8,7 @@
             <label v-if="isSaved === false" for="target">{{ targetPriceMessage }}</label>
             <label v-else-if="isSaved === true" for="target">목표 매수가가 저장됐어요.</label>
             <input id="target" v-model.number="targetPrice" type="text" :max="stockPrice"
-                maxlength="8" @click="isSaved = false" @focus="isFocused = true" @blur="isFocused = false" @input="inputLengthCheck">
+                maxlength="8" @click="isSaved = false" @focus="isFocused = true" @blur="isFocused = false" @input="inputLengthCheck" placeholder="가격을 입력해주세요.">
             <button @click="setTargetPrice()" :disabled="targetPrice < 0 || stockPrice < targetPrice || targetPrice.length > 8">
                 저장
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
@@ -178,8 +178,6 @@ export default {
             comment,
             isSaved,
             isFocused,
-            //addComma,
-            //removeComma,
             targetPriceMessage,
             setTargetPrice,
             inputLengthCheck
