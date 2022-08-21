@@ -129,9 +129,9 @@ app.put('/stocks/list/:name', (req, res) => {
 app.delete('/stocks/list/:name', (req, res) => {
     const findStock = companyList.find(n => n.name === req.params.name)
     
-    if(!dStock) return res.status(404).send('올바르지 않은 요청입니다!')
+    if(!findStock) return res.status(404).send('올바르지 않은 요청입니다!')
 
-    const index = companyList.indexOf(dStock)
+    const index = companyList.indexOf(findStock)
     companyList.splice(index, 1)
     res.send(companyList)
 })

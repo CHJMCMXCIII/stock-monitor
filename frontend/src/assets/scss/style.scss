@@ -2,7 +2,10 @@
 
 @import "./reset";
 @import "./font-face";
+@import "./mixin";
 @import "./variables";
+@import "./pages/home.scss";
+@import "./pages/add.scss";
 
 html {
     font-family: "Pretendard", "Malgun Gothic", "맑은 고딕", "돋움", Dotum, "굴림", Gulim, Tahoma, Verdana, Geneva, sans-serif, Apple Gothic, AppleGothic;
@@ -15,194 +18,55 @@ html {
 body {
     color: #333;
     width: 100%;
-    margin: 6rem auto;
+    margin: 1.6rem auto 6rem;
 }
 
-.wrapper {
+#content {
     box-sizing: border-box;
     padding: 0 1.6rem 1.6rem;
     margin: 0 1.6rem;
     border: 2px solid $color-primary;
-    border-radius: 0 1.6rem 1.6rem 1.6rem;
+    border-radius: 0 0 1.6rem 1.6rem;
     background-color: $color-black;
 }
 
-
-
 h1.app-title {
     display: inline-block;
-    padding: 1rem 1.2rem .8rem;
-    margin: 0 1.6rem;
-    background-color: #000;
+    padding: 1.6rem 1.2rem .8rem;
     color: $color-primary;
-    font-size: 1.6rem;
+    font-size: 1.8rem;
     font-weight: 700;
     letter-spacing: -.1rem;
-    border-radius: 1.6rem 1.6rem 0 0;
-    border: 2px solid $color-primary;
-    border-bottom: none;
+    font-style: italic;
     box-sizing: border-box;
 }
 
-h2.stock-name {
-    display: block;
-    text-align: center;
-    margin: 2.4rem 0 0;
-    color: $color-grey-0;
-    font-size: 2.8rem;
-    font-weight: 700;
+.router-nav {
+    display: flex;
+    justify-content: space-between;
+    margin: 0 1.6rem;
 }
 
-h3.stock-price-today {
-    display: block;
-    text-align: center;
-    margin: 0 0 4.8rem;
-    color: #fff;
-    font-size: 7.2rem;
-    font-weight: 900;
-    letter-spacing: -.5rem;
-
-    span {
-        display: inline-block;
-        margin-left: .3rem;
-        color: $color-grey-0;
-        font-size: 1.4rem;
-        letter-spacing: 0;
-    }
-}
-
-nav {
+.link-add {
     position: relative;
+    top: 2px;
     display: flex;
-    justify-content: center;
-    width: 100%;
-    max-width: 320px;
-    font-size: 1.6rem;
-    margin: 0 auto;
-
-    &::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        display: block;
-        width: 1rem;
-        height: 100%;
-        z-index: 1;
-        background-image: linear-gradient(to right, $color-black, transparent);
-    }
-
-    &::after {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: calc(100% - 3rem);
-        display: block;
-        width: 3rem;
-        height: 100%;
-        z-index: 1;
-        background-image: linear-gradient(to left, $color-black, transparent);
-    }
-
-    ul {
-        display: flex;
-        max-width: 320px;
-        overflow-x: scroll;
-        gap: 2.4rem;
-        justify-content: space-between;
-        width: 100%;
-
-    }
-
-    li {
-        cursor: pointer;
-        text-align: center;
-        word-break: keep-all;
-        white-space: nowrap;
-        padding-top: 1.6rem;
-        margin-bottom: 1.6rem;
-        color: $color-grey-0;
-
-        &:first-of-type {
-            margin-left: 1.6rem;
-        }
-
-        &:last-of-type {
-            margin-right: 3.2rem;
-        }
-
-        &.active {
-            color: #fff;
-            font-weight: bold;
-        }
-
-    }
-}
-
-.button-wrapper {
-    display: flex;
-    justify-content: center;
     align-items: center;
-    gap: 1.2rem;
-    margin: 1.6rem 0 5.8rem;
-    .separator {
-        color: $color-grey-1;
-        margin-bottom: 0.4rem;
+    padding: 1.1rem 1rem 0.9rem;
+    border-radius: 1.6rem 1.6rem 0 0;
+    border: 2px solid #7ff000;
+    border-bottom: none;
+    background-color: $color-black;
+    color: $color-primary;
+    font-size: 1.4rem;
+    font-weight: 700;
+    span {
+        margin-left: .6rem;
     }
-    button {
-        display: inline-block;
-        margin: 0 0 .4rem 0;
-        background-color: transparent;
-        color: #ccc;
-        font-weight: 500;
-        font-size: 1.4rem;
-        span {
-            display: block;
-            position: absolute;
-            overflow: hidden;
-            margin: -1px;
-            padding: 0;
-            width: 1px;
-            height: 1px;
-            line-height: 1px;
-            font-size: 1px;
-            border: 0;
-            clip: rect(0 0 0 0);
-        }
-    }
-
-    .reload-button {
-        svg {
-            fill: #ccc;
-            width: 2rem;
-            height: 2rem;
-
-            
-            &.rotate {
-                animation: spin .3s ease-out;
-            }
-        }
-
-        @keyframes spin {
-            from {
-                -webkit-transform: rotate(0deg);
-                -o-transform: rotate(0deg);
-                transform: rotate(0deg);
-            }
-            to {
-                -webkit-transform: rotate(-360deg);
-                -o-transform: rotate(-360deg);
-                transform: rotate(-360deg);
-            }
-        }
-    }
-
-    .delete-button {
-        svg {
-            fill: $color-red;
-            width: 2.2rem;
-            height: 2.2rem;
-        }
+    svg {
+        width: 2rem;
+        height: 2rem;
+        fill: $color-primary;
     }
 }
 
@@ -222,8 +86,8 @@ nav {
     width: 100%;
     height: 100%;
     background: $color-black;
-    opacity: 0.98;
-    backdrop-filter: blur(4px);
+    opacity: 0.95;
+    backdrop-filter: blur(10px);
     position: absolute;
     top: 0;
     left: 0;
@@ -256,10 +120,9 @@ nav {
     }
 }
 
-
 .vs-loading {
     position: relative;
-    margin: 0 auto 28rem;
+    margin: 0 auto 19.7rem;
     width: 220px;
     height: 220px;
     display: block;
@@ -277,6 +140,7 @@ nav {
         border-radius: 50%;
         -webkit-box-sizing: border-box;
         box-sizing: border-box;
+        background-color: $color-black;
         outline: none;
         transition: all .3s ease;
         animation: rotate 1s ease infinite;
@@ -312,6 +176,8 @@ nav {
     }
 
     .message {
+        position: relative;
+        z-index: 3;
         display: flex;
         justify-content: center;
         align-items: center;
@@ -326,173 +192,62 @@ nav {
     }
 }
 
-.comment {
+.button-save {
+    width: 100%;
+    padding: 1.8rem;
+    background-color: $color-secondary;
     text-align: center;
-    color: $color-primary;
+    color: #fff;
     font-size: 1.8rem;
-    margin-bottom: 1.6rem;
-}
-
-.target-price {
-    max-width: 640px;
-    margin: 0 auto;
-
-    label {
-        display: block;
-        margin-left: .4rem;
-        color: $color-grey-0;
-        font-size: 1.4rem;
-    }
-
-    input {
-        position: relative;
-        z-index: 1;
-        margin: .8rem auto 0;
-        padding: .8rem;
-        width: 100%;
-        background: #fff;
-        color: $color-dark;
-        font-size: 2.4rem;
-        font-weight: 700;
-    }
-
-    button {
-        width: 100%;
-        padding: 1.8rem;
-        background-color: $color-secondary;
-        text-align: center;
-        color: #fff;
-        font-size: 1.8rem;
-        font-weight: 500;
-        transition: background-color .2s ease-out, color .2s ease-out;
-
-        svg {
-            margin-left: .4rem;
-            fill: #fff;
-            transition: fill .2s ease-out;
-        }
-
-        &:hover {
-            color: $color-black;
-            background-color: $color-primary;
-
-            svg {
-                fill: $color-black;
-            }
-        }
-
-        &:disabled {
-            cursor: not-allowed;
-            background-color: #c6c6c6;
-            color: #8d8d8d;
-            animation: shake .5s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
-
-            svg {
-                fill: $color-grey-0;
-            }
-        }
-
-        @keyframes shake {
-            10%,
-            90% {
-              transform: translate3d(-1px, 0, 0);
-            }
-          
-            20%,
-            80% {
-              transform: translate3d(2px, 0, 0);
-            }
-          
-            30%,
-            50%,
-            70% {
-              transform: translate3d(-4px, 0, 0);
-            }
-          
-            40%,
-            60% {
-              transform: translate3d(4px, 0, 0);
-            }
-        }
-    }
-}
-
-.chart {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    max-width: 220px;
-    padding: 1.6rem 0;
-    margin: 0 auto 2.4rem auto;
-    background-color: #e3e3ff;
-    border-radius: 100%;
+    font-weight: 500;
+    transition: background-color .2s ease-out, color .2s ease-out;
 
     svg {
-        width: 18rem;
-        height: 18rem;
+        margin-left: .4rem;
+        fill: #fff;
+        transition: fill .2s ease-out;
     }
 
-    .backColor {
-        fill: #aaa;
-    }
+    &:hover {
+        color: $color-black;
+        background-color: $color-primary;
 
-    .frontColor0 {
-        fill: $color-secondary;
-    }
-}
-
-.price-table {
-    color: #fff;
-    font-size: 1.6rem;
-    margin: 3.6rem auto;
-    padding: 1.6rem 0;
-    width: 100%;
-    max-width: 640px;
-
-    table {
-        width: 100%;
-
-        thead {
-            th {
-                text-align: center;
-                padding: .8rem 0;
-            }
+        svg {
+            fill: $color-black;
         }
+    }
 
-        tbody {
-            text-align: center;
+    &:disabled {
+        cursor: not-allowed;
+        background-color: #c6c6c6;
+        color: #8d8d8d;
+        animation: shake .5s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
 
-            tr {
+        svg {
+            fill: $color-grey-0;
+        }
+    }
 
-                td {
-                    padding: .4rem 0;
-                    vertical-align: middle;
-
-                    &:first-child {
-                        width: 20%;
-                        font-size: 1.2rem;
-                    }
-
-                    &:nth-child(2) {
-                        width: 50%;
-                    }
-
-                    &:last-child {
-                        width: 30%;
-                        font-weight: 500;
-                    }
-
-                    &.increase {
-                        color: $color-red;
-                    }
-
-                    &.decrease {
-                        color: $color-blue;
-                    }
-                }
-            }
-
-
+    @keyframes shake {
+        10%,
+        90% {
+          transform: translate3d(-1px, 0, 0);
+        }
+      
+        20%,
+        80% {
+          transform: translate3d(2px, 0, 0);
+        }
+      
+        30%,
+        50%,
+        70% {
+          transform: translate3d(-4px, 0, 0);
+        }
+      
+        40%,
+        60% {
+          transform: translate3d(4px, 0, 0);
         }
     }
 }

@@ -29,6 +29,9 @@ export default createStore({
         },
         SET_TARGET_PRICE(state, payload) {
             state.targetPrice = payload
+        },
+        SET_LOADING_STATE(state, payload) {
+            state.isLoading = payload
         }
     },
     actions: {

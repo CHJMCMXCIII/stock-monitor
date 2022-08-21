@@ -1,74 +1,52 @@
 <template>
     <section>
-        <h1 class="app-title">주식 매수 목표가격 모니터</h1>
-        <div class="wrapper">
-            <div class="back" v-if="isLoading">
-                <div class="background"></div>
-                <div class="vs-loading">
-                    <div class="effect-1 effects"></div>
-                    <div class="effect-2 effects"></div>
-                    <div class="effect-3 effects"></div>
-                    <div class="message">
-                        <p>정보를 불러오고 있어요!</p>
-                    </div>
-                </div>
-            </div>
+        <div class="router-nav">
+            <h1 class="app-title">
+                <router-link to="/">주식 매수 목표가격 모니터</router-link>
+            </h1>
+            <router-link class="link-add" to="/add">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M12 2c5.514 0 10 4.486 10 10s-4.486 10-10 10-10-4.486-10-10 4.486-10 10-10zm0-2c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm6 13h-5v5h-2v-5h-5v-2h5v-5h2v5h5v2z"/></svg>
+                <span>종목추가</span>
+            </router-link>
+        </div>
 
-            <StockList></StockList>
-            <ButtonGroup></ButtonGroup>
-            <h2 class="stock-name">{{ currentStockName || '종목명' }}</h2>
-            <h3 class="stock-price-today">{{ commaAddedStockPrice || 0 }}<span>원</span></h3>
-            <TargetPriceAndChart></TargetPriceAndChart>
-
-            <StockPriceTable></StockPriceTable>
+        <div id="content">
+            <router-view />
         </div>
     </section>
+    <div class="back" v-if="isLoading">
+        <div class="background"></div>
+        <div class="vs-loading">
+            <div class="effect-1 effects"></div>
+            <div class="effect-2 effects"></div>
+            <div class="effect-3 effects"></div>
+            <div class="message">
+                <p>정보를 불러오고 있어요!</p>
+            </div>
+        </div>
+    </div>
 </template>
 <script>
-import StockList from './components/StockList'
-import StockPriceTable from './components/StockPriceTable'
-import TargetPriceAndChart from './components/TargetPriceAndChart.vue'
-import ButtonGroup from "./components/ButtonGroup.vue";
-
-import { onMounted, computed } from 'vue'
+import { onBeforeMount, computed } from 'vue'
 import { useStore } from "vuex";
-
 
 export default {
     name: 'stock-monitor',
-    components: {
-    StockList,
-    StockPriceTable,
-    TargetPriceAndChart,
-    ButtonGroup
-},
-    //setup 함수는, Vue 3 에서 새로 나온 Composition API 이다.
-    // 기존에 data, methods 등으로 흩어져있던것을, 하나의 장소로 모으게 해준다.
-    // template 에서 사용하고자하는 변수, 함수등을 정의한뒤,
-    // 객체에 하나씩 골라담아, return 해주면
-    // template 에서 해당 변수와 함수를 접근할수있다.
     setup() {
         const store = useStore()
-        let currentStockName = computed(() => store.state.currentStockName)
-        let stockPrice = computed(() => store.state.stockPrice)
         let isLoading = computed(() => store.state.isLoading)
-        
-        onMounted(() => {
-            store.dispatch("LOAD_DATA")
-        })
 
-        const commaAddedStockPrice = computed(() => {
-            return stockPrice.value.toLocaleString('ko-KR');
+        onBeforeMount(() => {
+            store.commit("SET_LOADING_STATE", true)
         })
+        
 
         return {
-            isLoading,
-            currentStockName,
-            stockPrice,
-            commaAddedStockPrice,
+            isLoading
         }
-    },
+    }
 }
+
 </script>
 
 <style lang="scss">
