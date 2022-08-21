@@ -113,6 +113,29 @@ app.get('/stocks/list', (req, res) => {
     res.send(companyList)
 })
 
+
+app.put('/stocks/list/:name', (req, res) => {
+    console.log(req.params.name)
+
+    const newStock = {
+        name: req.body.name,
+        code: req.body.code
+    }
+
+    //companyList.push(newStock)
+    res.send(companyList)
+})
+
+app.delete('/stocks/list/:name', (req, res) => {
+    const findStock = companyList.find(n => n.name === req.params.name)
+    
+    if(!dStock) return res.status(404).send('올바르지 않은 요청입니다!')
+
+    const index = companyList.indexOf(dStock)
+    companyList.splice(index, 1)
+    res.send(companyList)
+})
+
 app.listen(PORT, () => {
     console.log(`서버가 http://127.0.0.1:${PORT} 에서 구동되고 있어요!`)
 })
