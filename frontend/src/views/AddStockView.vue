@@ -9,11 +9,11 @@
 
             <div>
                 <input type="text" id="name" autocomplete="off" required>
-                <label for="name"><p>종목명 <span>ex) 삼성전자</span></p></label>
+                <label for="name"><p>종목명</p></label>
             </div>
 
             <div>
-                <input type="text" id="code" autocomplete="off" required>
+                <input type="text" id="code" autocomplete="off" required  @input="numCheck" minlength="6" maxlength="6">
                 <label for="code"><p>종목코드 <span>ex) 000000</span></p></label>
             </div>
 
@@ -45,9 +45,19 @@ export default {
 
         const addStock = () => {
             console.log('asd')
+            // store.dispatch("ADD_STOCK")
+            // RELOAD
+            // HOME 으로 페이지 이동
         }
+
+        const numCheck = (event) => {
+            event.target.value = event.target.value.replace(/\D/g,"")
+        }
+
+        // 숫자나 문자만 입력 가능하게끔
         return {
-            addStock
+            addStock,
+            numCheck
         }
     }
 }

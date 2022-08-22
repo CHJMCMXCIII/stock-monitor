@@ -7,7 +7,7 @@
         <div class="target-price">
             <label v-if="isSaved === false" for="target">{{ targetPriceMessage }}</label>
             <label v-else-if="isSaved === true" for="target">목표 매수가가 저장됐어요.</label>
-            <input id="target" v-model="targetPrice" type="text" maxlength="8" @keyup="getNumber" @input="getNumber" placeholder="가격을 입력해주세요.">
+            <input id="target" v-model="targetPrice" type="text" maxlength="8" @input="getNumber" placeholder="가격을 입력해주세요.">
             <button class="button-save" @click="setTargetPrice" @focus="isSaved = true" @blur="isSaved=false" :disabled="targetPrice.length === 0 || stockPrice < Number(targetPrice.replaceAll(',', '')) || targetPrice.length > 8">
                 저장
                 <svg @click.prevent.self xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
