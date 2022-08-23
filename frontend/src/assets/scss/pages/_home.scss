@@ -61,6 +61,7 @@ nav {
     }
 
     ul {
+        user-select: none;
         display: flex;
         max-width: 320px;
         overflow-x: scroll;
@@ -153,6 +154,7 @@ nav {
 }
 
 .comment {
+    user-select: none;
     text-align: center;
     color: $color-primary;
     font-size: 1.8rem;

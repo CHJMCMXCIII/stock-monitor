@@ -136,7 +136,9 @@ app.put('/stocks/list/:name&:code', (req, res) => {
     companyList.unshift(newStock)
 
     // lodash 중복 제거
-    companyList = _.uniqBy(companyList, "name")
+    //companyList = _.uniqBy(companyList, "name")
+
+    console.log('수정: ' + companyList)
 
     res.send(companyList)
 })

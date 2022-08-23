@@ -37,7 +37,7 @@ export default {
         let isLoading = computed(() => store.state.isLoading)
 
         onBeforeMount(() => {
-            store.commit("SET_LOADING_STATE", true)
+            store.commit("SET_ISLOADING", true)
         })
         
 

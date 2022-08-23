@@ -13,7 +13,7 @@ import StockPriceTable from '../components/StockPriceTable'
 import TargetPriceAndChart from '../components/TargetPriceAndChart.vue'
 import ButtonGroup from "../components/ButtonGroup.vue"
 
-import { onBeforeMount, computed } from 'vue'
+import { onMounted, computed } from 'vue'
 import { useStore } from "vuex";
 
 export default {
@@ -29,8 +29,8 @@ export default {
         let currentStockName = computed(() => store.state.currentStockName)
         let stockPrice = computed(() => store.state.stockPrice)
         
-        onBeforeMount(() => {
-            store.commit("SET_LOADING_STATE", true)
+        onMounted(() => {
+            store.commit("SET_ISLOADING", true)
             store.dispatch("LOAD_DATA")
         })
 

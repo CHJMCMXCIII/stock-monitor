@@ -139,7 +139,7 @@ export default {
         const getNumber = (event) => {
             const preNum = event.target.value.replace(/\D/g,"")
             const postNum = addcommas(preNum)
-            targetPrice.value = postNum
+            targetPrice.value = postNum.trim()
         }
 
         const addcommas = (num) => {
