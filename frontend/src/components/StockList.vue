@@ -19,7 +19,6 @@ export default {
         // 값 변동시 set
         const companyList = computed(() => store.state.stocks)
         
-        
         onMounted(() => {
             store.dispatch("REQUEST_COMPANY")
         })

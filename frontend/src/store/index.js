@@ -82,9 +82,27 @@ export default createStore({
                 .then(res => {
                     commit("SET_COMPANY", res.data)
                     commit("SET_NAME", res.data[0].name)
+                    console.log(res.data, res.data[0].name)
                     localStorage.setItem("stocks", JSON.stringify(res.data))
                 })
+        },
+        ADD_STOCK({ commit }, payload) {
+            let newStockList = JSON.parse(localStorage.getItem("stocks"))
+            const length = newStockList.length
+            newStockList[length] = payload
+
+            axios.put('http://127.0.0.1:12010/stocks/list/', { name: payload.name, code: payload.code })
+                .then(res => {
+                    console.log(`put res = ${res.data}`)
+                    commit("SET_COMPANY", newStockList)
+                    commit("SET_NAME", payload.name)
+                    localStorage.setItem("stocks", JSON.stringify(newStockList))
+                })
+
+
+            //console.log(`newStockList ${localStorage.getItem("stocks")}`)
             
+            //console.log(JSON.parse(localStorage.getItem("stocks")))
         }
     }
 })

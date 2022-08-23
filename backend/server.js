@@ -17,10 +17,20 @@ const DAY_PRICE_URL = 'https://finance.naver.com/item/sise_day.nhn?code='
 const fs = require('fs');
 const path = require('path');
 
-let jsonFilePath = path.join(__dirname, './data/CompanyList.json')
-let data = JSON.parse(fs.readFileSync(jsonFilePath, 'utf-8'))
 
-const companyList = data
+const getJson = () => {
+    let jsonFilePath = path.join(__dirname, './data/CompanyList.json')
+    let data = JSON.parse(fs.readFileSync(jsonFilePath, 'utf-8'))
+
+    return data
+}
+
+const companyList = getJson()
+
+// const writeJson = (data) => {
+//     let jsonFilePath = path.join(__dirname, './data/CompanyList.json')
+//     fs.writeFileSync(jsonFilePath, data)
+// }
 
 // https://poiemaweb.com/es6-generator
 function * reqDaysPrice(url, name) {
@@ -49,6 +59,7 @@ function * reqDaysPrice(url, name) {
 
 const run = function* () {
     let returningObject = {}
+
     // 제너레이터 활용하여 기업별 정보 가져올때 비동기 로직 처리
     for (let company of companyList) {
         const name = company.name
@@ -86,7 +97,6 @@ const requestTodayPrice = (url, name) => {
 }
 
 app.get('/stocks/today', async (req,res) => {
-    
     const urlList = companyList.map(i => requestTodayPrice(COMPANY_MAIN_URL + i.code, i.name))
     // requestTodayPrice를 promise로 함수를 감쌌기 때문에 await 사용 가능
     const returningUrlList = await Promise.all(urlList)
@@ -122,7 +132,6 @@ app.put('/stocks/list/:name', (req, res) => {
         code: req.body.code
     }
 
-    //companyList.push(newStock)
     res.send(companyList)
 })
 
@@ -133,6 +142,7 @@ app.delete('/stocks/list/:name', (req, res) => {
 
     const index = companyList.indexOf(findStock)
     companyList.splice(index, 1)
+
     res.send(companyList)
 })
 

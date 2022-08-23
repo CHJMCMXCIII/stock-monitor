@@ -48,9 +48,9 @@ export default {
                 let askDelete = confirm(`${Josa.r(currentStockName.value, '을/를')} 목록에서 제거할까요?`)
                 if (askDelete) {
                     store.dispatch("DELETE_STOCK", currentStockName.value)
-                    store.dispatch("LOAD_DATA")
                 }
             }
+
         }
 
         return {

@@ -8,12 +8,12 @@
             </legend>
 
             <div>
-                <input type="text" id="name" autocomplete="off" required>
+                <input v-model="addStockName" type="text" id="name" autocomplete="off" required>
                 <label for="name"><p>종목명</p></label>
             </div>
 
             <div>
-                <input type="text" id="code" autocomplete="off" required  @input="numCheck" minlength="6" maxlength="6">
+                <input v-model="addStockCode" type="text" id="code" autocomplete="off" required  @input="numCheck" minlength="6" maxlength="6">
                 <label for="code"><p>종목코드 <span>ex) 000000</span></p></label>
             </div>
 
@@ -31,7 +31,7 @@
 </template>
 
 <script>
-import { onMounted } from 'vue'
+import { onMounted, ref } from 'vue'
 import { useStore } from 'vuex'
 
 export default {
@@ -39,13 +39,19 @@ export default {
     setup() {
         const store = useStore()
 
+        const addStockName = ref('')
+        const addStockCode = ref('')
+
         onMounted(() => {
             store.commit("SET_LOADING_STATE", false)
         })
 
         const addStock = () => {
-            console.log('asd')
-            // store.dispatch("ADD_STOCK")
+            const payload = {
+                "name": addStockName.value,
+                "code": addStockCode.value
+            }
+            store.dispatch("ADD_STOCK", payload)
             // RELOAD
             // HOME 으로 페이지 이동
         }
@@ -56,6 +62,8 @@ export default {
 
         // 숫자나 문자만 입력 가능하게끔
         return {
+            addStockName,
+            addStockCode,
             addStock,
             numCheck
         }

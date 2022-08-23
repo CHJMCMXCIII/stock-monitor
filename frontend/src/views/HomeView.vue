@@ -29,8 +29,11 @@ export default {
         let currentStockName = computed(() => store.state.currentStockName)
         let stockPrice = computed(() => store.state.stockPrice)
         
-
+        // onBeforeMount(() => {
+        //     store.dispatch("REQUEST_COMPANY")
+        // })
         onMounted(() => {
+            
             store.dispatch("LOAD_DATA")
         })
 
