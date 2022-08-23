@@ -42,8 +42,14 @@ export default createStore({
                 axios.get("http://127.0.0.1:12010/stocks/days")
             ])
                 .then(res => {
-                    this.state.isLoading = false
-                    this.state.currentStockName = res[0].data[0].name
+                    
+                    console.log('===LOAD DATA===')
+                    console.log(res[0].data[0].name)
+                    // 종목 리스트 불러오기
+                    commit("SET_COMPANY", res[0].data)
+                    localStorage.setItem("stocks", JSON.stringify(res[0].data))
+
+                    commit("SET_NAME", res[0].data[0].name)
 
                     // 현재 주가
                     this.state.stockPriceData = res[1].data
@@ -54,8 +60,8 @@ export default createStore({
                     commit("SET_TABLE_DATA", this.state.tableData[this.state.currentStockName])
                     commit("SET_TARGET_PRICE", localStorage.getItem(this.state.currentStockName) || 0)
 
-                })
-                
+                    this.state.isLoading = false
+                }) 
         },
         CHANGE_DATA({ commit }, payload) {
             commit("SET_NAME", payload)
@@ -70,33 +76,24 @@ export default createStore({
                     commit("SET_STOCK_PRICE", res.data[payload])
                 })
         },
-        REQUEST_COMPANY({ commit }) {
-            axios.get('http://127.0.0.1:12010/stocks/list')
-                .then(res => {
-                    commit("SET_COMPANY", res.data)
-                    localStorage.setItem("stocks", JSON.stringify(res.data))
-                })
-        },
         DELETE_STOCK({ commit }, payload) {
             axios.delete(`http://127.0.0.1:12010/stocks/list/${payload}`)
                 .then(res => {
                     commit("SET_COMPANY", res.data)
                     commit("SET_NAME", res.data[0].name)
-                    console.log(res.data, res.data[0].name)
                     localStorage.setItem("stocks", JSON.stringify(res.data))
                 })
         },
         ADD_STOCK({ commit }, payload) {
+            console.log('ADD_STOCK')
             let newStockList = JSON.parse(localStorage.getItem("stocks"))
             const length = newStockList.length
             newStockList[length] = payload
-
-            axios.put('http://127.0.0.1:12010/stocks/list/', { name: payload.name, code: payload.code })
+            localStorage.setItem("stocks", JSON.stringify(newStockList))
+            axios.put(`http://127.0.0.1:12010/stocks/list/${payload.name}&${payload.code}`)
                 .then(res => {
-                    console.log(`put res = ${res.data}`)
-                    commit("SET_COMPANY", newStockList)
-                    commit("SET_NAME", payload.name)
-                    localStorage.setItem("stocks", JSON.stringify(newStockList))
+                    commit("SET_COMPANY", res.data)
+                    commit("SET_NAME", res.data[0].name)
                 })
 
 

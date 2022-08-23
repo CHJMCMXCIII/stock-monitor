@@ -14,8 +14,9 @@ const vo = require('vo')
 const COMPANY_MAIN_URL = 'https://finance.naver.com/item/main.nhn?code='
 const DAY_PRICE_URL = 'https://finance.naver.com/item/sise_day.nhn?code='
 
-const fs = require('fs');
-const path = require('path');
+const fs = require('fs')
+const path = require('path')
+const _ = require('lodash')
 
 
 const getJson = () => {
@@ -25,7 +26,7 @@ const getJson = () => {
     return data
 }
 
-const companyList = getJson()
+let companyList = getJson()
 
 // const writeJson = (data) => {
 //     let jsonFilePath = path.join(__dirname, './data/CompanyList.json')
@@ -124,13 +125,18 @@ app.get('/stocks/list', (req, res) => {
 })
 
 
-app.put('/stocks/list/:name', (req, res) => {
-    console.log(req.params.name)
+app.put('/stocks/list/:name&:code', (req, res) => {
+    //console.log(req.params)
 
     const newStock = {
-        name: req.body.name,
-        code: req.body.code
+        name: req.params.name,
+        code: req.params.code
     }
+
+    companyList.unshift(newStock)
+
+    // lodash 중복 제거
+    companyList = _.uniqBy(companyList, "name")
 
     res.send(companyList)
 })

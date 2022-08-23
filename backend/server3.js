@@ -1,24 +1,26 @@
-const axios = require('axios')
+const fs = require('fs');
+const path = require('path');
 
+const getJson = () => {
+    let jsonFilePath = path.join(__dirname, './data/CompanyList.json')
+    let data = JSON.parse(fs.readFileSync(jsonFilePath, 'utf-8'))
 
-// const getData = async () => {
-//     const response = await axios.get('http://127.0.0.1:12010/stocks/list')
-//     let server_data = response.data
+    return data
+}
 
-//     console.log(server_data[1])
-// }
+let companyList = getJson()
 
-// getData()
+const newStock = {
+    name: "asd",
+    code: "123213"
+}
 
+companyList.unshift(newStock)
+companyList.unshift(newStock)
+companyList.unshift(newStock)
 
-let server_data;
-axios.get('http://127.0.0.1:12010/stocks/list')
-.then(res => { 
+const set = new Set(companyList)
 
-    server_data = res.data
-    console.log(res.data[0].name)
-})
+companyList = [...set]
 
-
-
-
+console.log(companyList)

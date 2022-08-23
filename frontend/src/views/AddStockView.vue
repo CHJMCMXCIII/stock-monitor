@@ -33,11 +33,13 @@
 <script>
 import { onMounted, ref } from 'vue'
 import { useStore } from 'vuex'
+import { useRouter } from 'vue-router'
 
 export default {
     name: 'stock-monitor-add',
     setup() {
         const store = useStore()
+        const router = useRouter()
 
         const addStockName = ref('')
         const addStockCode = ref('')
@@ -54,6 +56,7 @@ export default {
             store.dispatch("ADD_STOCK", payload)
             // RELOAD
             // HOME 으로 페이지 이동
+            router.push('/')
         }
 
         const numCheck = (event) => {
