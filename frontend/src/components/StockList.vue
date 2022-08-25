@@ -38,7 +38,6 @@ export default {
         }
 
         onUpdated(() => {
-            console.log('onUpdated')
             navFocus()
         })
 

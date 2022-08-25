@@ -55,7 +55,7 @@ export default {
             }
             store.commit("SET_ISLOADING", true)
             store.dispatch("ADD_STOCK", payload)
-            store.dispatch("LOAD_DATA")
+
             // RELOAD
             // HOME 으로 페이지 이동
             router.push('/')

@@ -26,12 +26,12 @@ const getJson = () => {
     return data
 }
 
-let companyList = getJson()
+//let companyList = getJson()
 
-// const writeJson = (data) => {
-//     let jsonFilePath = path.join(__dirname, './data/CompanyList.json')
-//     fs.writeFileSync(jsonFilePath, data)
-// }
+const writeJson = (data) => {
+    let jsonFilePath = path.join(__dirname, './data/CompanyList.json')
+    fs.writeFileSync(jsonFilePath, data)
+}
 
 // https://poiemaweb.com/es6-generator
 function * reqDaysPrice(url, name) {
@@ -60,7 +60,7 @@ function * reqDaysPrice(url, name) {
 
 const run = function* () {
     let returningObject = {}
-
+    let companyList = getJson()
     // 제너레이터 활용하여 기업별 정보 가져올때 비동기 로직 처리
     for (let company of companyList) {
         const name = company.name
@@ -98,6 +98,10 @@ const requestTodayPrice = (url, name) => {
 }
 
 app.get('/stocks/today', async (req,res) => {
+    
+    let companyList = getJson()
+    // console.log('현재가격')
+    // console.log(companyList)
     const urlList = companyList.map(i => requestTodayPrice(COMPANY_MAIN_URL + i.code, i.name))
     // requestTodayPrice를 promise로 함수를 감쌌기 때문에 await 사용 가능
     const returningUrlList = await Promise.all(urlList)
@@ -114,6 +118,9 @@ app.get('/stocks/today', async (req,res) => {
 })
 
 app.get('/stocks/days', (req, res) => {
+    let companyList = getJson()
+    // console.log('테이블')
+    // console.log(companyList)
     vo(run)(function (err, data) {
         if(err)console.log(`error : ${err}`)
         res.send(data)
@@ -121,9 +128,9 @@ app.get('/stocks/days', (req, res) => {
 })
 
 app.get('/stocks/list', (req, res) => {
+    let companyList = getJson()
     res.send(companyList)
 })
-
 
 app.put('/stocks/list/:name&:code', (req, res) => {
     //console.log(req.params)
@@ -133,17 +140,22 @@ app.put('/stocks/list/:name&:code', (req, res) => {
         code: req.params.code
     }
 
+    let companyList = getJson()
+
     companyList.unshift(newStock)
 
     // lodash 중복 제거
-    //companyList = _.uniqBy(companyList, "name")
+    companyList = _.uniqBy(companyList, "code")
 
-    console.log('수정: ' + companyList)
+    // console.log('수정: ')
+    // console.log(companyList)
 
+    writeJson(JSON.stringify(companyList))
     res.send(companyList)
 })
 
 app.delete('/stocks/list/:name', (req, res) => {
+    let companyList = getJson()
     const findStock = companyList.find(n => n.name === req.params.name)
     
     if(!findStock) return res.status(404).send('올바르지 않은 요청입니다!')
@@ -151,6 +163,7 @@ app.delete('/stocks/list/:name', (req, res) => {
     const index = companyList.indexOf(findStock)
     companyList.splice(index, 1)
 
+    writeJson(JSON.stringify(companyList))
     res.send(companyList)
 })
 
