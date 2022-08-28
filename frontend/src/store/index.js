@@ -46,7 +46,7 @@ export default createStore({
                 axios.get("http://127.0.0.1:12010/stocks/days")
             ])
                 .then(res => {
-
+                    
                     // console.log('===LOAD DATA===')
                     // console.log(res[0].data[0].name)
                     // 종목 리스트 불러오기

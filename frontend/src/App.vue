@@ -21,7 +21,7 @@
             <div class="effect-2 effects"></div>
             <div class="effect-3 effects"></div>
             <div class="message">
-                <p>정보를 불러오고 있어요!</p>
+                <p>주가 정보를 불러오고 있어요!</p>
             </div>
         </div>
     </div>

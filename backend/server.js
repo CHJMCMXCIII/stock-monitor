@@ -19,19 +19,16 @@ const path = require('path')
 const _ = require('lodash')
 
 
-const getJson = () => {
-    let jsonFilePath = path.join(__dirname, './data/CompanyList.json')
+const getJson = (req, res, next) => {
+    const jsonFilePath = path.join(__dirname, './data/CompanyList.json')
     let data = JSON.parse(fs.readFileSync(jsonFilePath, 'utf-8'))
 
-    return data
+    req.jsonData = data
+    //console.log(data.length)
+    next();
 }
 
-//let companyList = getJson()
-
-const writeJson = (data) => {
-    let jsonFilePath = path.join(__dirname, './data/CompanyList.json')
-    fs.writeFileSync(jsonFilePath, data)
-}
+app.use(getJson)
 
 // https://poiemaweb.com/es6-generator
 function * reqDaysPrice(url, name) {
@@ -60,7 +57,9 @@ function * reqDaysPrice(url, name) {
 
 const run = function* () {
     let returningObject = {}
-    let companyList = getJson()
+
+    const jsonFilePath = path.join(__dirname, './data/CompanyList.json')
+    let companyList = JSON.parse(fs.readFileSync(jsonFilePath, 'utf-8'))
     // 제너레이터 활용하여 기업별 정보 가져올때 비동기 로직 처리
     for (let company of companyList) {
         const name = company.name
@@ -98,10 +97,8 @@ const requestTodayPrice = (url, name) => {
 }
 
 app.get('/stocks/today', async (req,res) => {
-    
-    let companyList = getJson()
-    // console.log('현재가격')
-    // console.log(companyList)
+    //console.log("====현재주가 미들웨어====")
+    let companyList = req.jsonData
     const urlList = companyList.map(i => requestTodayPrice(COMPANY_MAIN_URL + i.code, i.name))
     // requestTodayPrice를 promise로 함수를 감쌌기 때문에 await 사용 가능
     const returningUrlList = await Promise.all(urlList)
@@ -118,8 +115,7 @@ app.get('/stocks/today', async (req,res) => {
 })
 
 app.get('/stocks/days', (req, res) => {
-    let companyList = getJson()
-    // console.log('테이블')
+    //console.log('====주가변동 테이블 미들웨어====')
     // console.log(companyList)
     vo(run)(function (err, data) {
         if(err)console.log(`error : ${err}`)
@@ -128,9 +124,16 @@ app.get('/stocks/days', (req, res) => {
 })
 
 app.get('/stocks/list', (req, res) => {
-    let companyList = getJson()
+    //console.log('====종목 리스트 미들웨어====')
+    let companyList = req.jsonData
     res.send(companyList)
 })
+
+
+const writeJson = (data) => {
+    let jsonFilePath = path.join(__dirname, './data/CompanyList.json')
+    fs.writeFileSync(jsonFilePath, data)
+}
 
 app.put('/stocks/list/:name&:code', (req, res) => {
     //console.log(req.params)
@@ -140,7 +143,7 @@ app.put('/stocks/list/:name&:code', (req, res) => {
         code: req.params.code
     }
 
-    let companyList = getJson()
+    let companyList = req.jsonData
 
     companyList.unshift(newStock)
 
@@ -151,11 +154,14 @@ app.put('/stocks/list/:name&:code', (req, res) => {
     // console.log(companyList)
 
     writeJson(JSON.stringify(companyList))
+
+    //console.log('======추가=========')
+    //console.log(companyList.length)
     res.send(companyList)
 })
 
 app.delete('/stocks/list/:name', (req, res) => {
-    let companyList = getJson()
+    let companyList = req.jsonData
     const findStock = companyList.find(n => n.name === req.params.name)
     
     if(!findStock) return res.status(404).send('올바르지 않은 요청입니다!')

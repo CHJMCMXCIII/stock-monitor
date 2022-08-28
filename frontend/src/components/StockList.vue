@@ -38,6 +38,7 @@ export default {
         }
 
         onUpdated(() => {
+            store.dispatch("CHANGE_DATA", companyName.value)
             navFocus()
         })
 
